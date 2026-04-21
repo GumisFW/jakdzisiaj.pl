@@ -131,7 +131,7 @@
   .period-row {
     display: flex;
     align-items: center;
-    gap: clamp(12px, 2vw, 28px);
+    gap: clamp(10px, 1.5vw, 22px);
     padding: clamp(10px, 1.4vw, 18px) 0;
     border-top: 1px solid #111;
   }
@@ -144,16 +144,17 @@
     letter-spacing: 1px;
     flex-shrink: 0;
   }
+  .ptemp-wind {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
   .ptemp {
     font-size: clamp(10px, 1.4vw, 18px);
-    width: clamp(48px, 6vw, 80px);
-    flex-shrink: 0;
   }
   .pwind {
-    font-size: clamp(7px, 0.9vw, 11px);
+    font-size: clamp(6px, 0.75vw, 9px);
     color: #444;
-    flex: 1;
-    text-align: right;
     letter-spacing: 1px;
   }
 
@@ -446,8 +447,10 @@ function render(data, city, lat, lon) {
     return `<div class="period-row">
       <span class="pname">${p.name}</span>
       ${wmoIcon(code, 20)}
-      <span class="ptemp">${Math.round(avg(temps))}°C</span>
-      <span class="pwind">${Math.round(avg(winds))} KM/H</span>
+      <div class="ptemp-wind">
+        <span class="ptemp">${Math.round(avg(temps))}°C</span>
+        <span class="pwind">${Math.round(avg(winds))} KM/H</span>
+      </div>
     </div>`;
   }).join('');
 
@@ -455,7 +458,7 @@ function render(data, city, lat, lon) {
   for (let i = tIdx; i < Math.min(tIdx+10, d.time.length); i++) {
     const dt = new Date(d.time[i]+'T12:00:00');
     forecast.push({
-      name: i===tIdx ? 'DZIS' : DAYS[dt.getDay()],
+      name: DAYS[dt.getDay()],
       today: i===tIdx,
       code: d.weathercode[i],
       hi: Math.round(d.temperature_2m_max[i]),
