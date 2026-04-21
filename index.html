@@ -3,142 +3,206 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>POGODA</title>
+<title>POGODA // JAKDZISIAJ.PL</title>
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { font-size: 16px; }
 
   body {
     background: #000;
     color: #fff;
     font-family: 'Press Start 2P', monospace;
     min-height: 100vh;
-    padding: 36px 48px;
+    padding: clamp(20px, 4vw, 56px) clamp(20px, 5vw, 72px);
   }
 
   body::after {
     content: '';
     position: fixed;
     inset: 0;
-    background: repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,0,0,0.10) 3px, rgba(0,0,0,0.10) 4px);
+    background: repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,0,0,0.08) 3px, rgba(0,0,0,0.08) 4px);
     pointer-events: none;
     z-index: 999;
   }
 
+  /* ── CLOCK ── */
   .clock {
-    font-size: 6px;
+    font-size: clamp(7px, 1vw, 10px);
     color: #333;
-    letter-spacing: 2px;
-    margin-bottom: 36px;
+    letter-spacing: 3px;
+    margin-bottom: clamp(28px, 4vw, 52px);
   }
 
+  /* ── LAYOUT ── */
   .layout {
     display: flex;
-    gap: 80px;
+    gap: clamp(32px, 6vw, 100px);
     align-items: flex-start;
   }
 
-  .col-left  { flex: 1; }
-  .col-right { width: 230px; flex-shrink: 0; }
+  .col-left  { flex: 1; min-width: 0; }
 
-  .label {
-    font-size: 6px;
-    color: #444;
-    letter-spacing: 3px;
-    margin-bottom: 16px;
+  .col-right {
+    width: clamp(160px, 22vw, 280px);
+    flex-shrink: 0;
   }
 
+  /* ── LABELS ── */
+  .label {
+    font-size: clamp(7px, 0.9vw, 11px);
+    color: #444;
+    letter-spacing: 3px;
+    margin-bottom: clamp(12px, 1.5vw, 20px);
+  }
+
+  /* ── CITY ── */
   .city {
-    font-size: 20px;
-    line-height: 1.6;
-    margin-bottom: 6px;
+    font-size: clamp(28px, 5vw, 72px);
+    line-height: 1.3;
+    margin-bottom: clamp(6px, 0.8vw, 12px);
+    word-break: break-word;
   }
 
   .coords {
-    font-size: 6px;
+    font-size: clamp(7px, 0.8vw, 10px);
     color: #333;
     letter-spacing: 2px;
-    margin-bottom: 36px;
+    margin-bottom: clamp(28px, 4vw, 52px);
   }
 
+  /* ── CURRENT TEMP ── */
   .temp-now {
-    font-size: 52px;
+    font-size: clamp(44px, 8vw, 100px);
     line-height: 1;
-    margin: 14px 0 10px;
+    margin: clamp(10px, 1.5vw, 20px) 0 clamp(8px, 1vw, 14px);
   }
 
   .temp-unit {
-    font-size: 16px;
-    color: #666;
+    font-size: clamp(14px, 2vw, 26px);
+    color: #555;
     vertical-align: super;
     margin-left: 4px;
   }
 
   .feels {
-    font-size: 6px;
+    font-size: clamp(7px, 0.9vw, 11px);
     color: #444;
     letter-spacing: 2px;
-    margin-bottom: 20px;
+    margin-bottom: clamp(16px, 2.5vw, 32px);
   }
 
+  /* ── COMPARE ── */
   .compare {
-    font-size: 7px;
-    color: #666;
+    font-size: clamp(8px, 1vw, 13px);
+    color: #555;
     letter-spacing: 1px;
-    line-height: 2.4;
-    margin-bottom: 36px;
+    line-height: 2.6;
+    margin-bottom: clamp(28px, 4vw, 52px);
   }
 
   .compare-hl {
-    font-size: 8px;
+    font-size: clamp(9px, 1.2vw, 15px);
     color: #fff;
     display: block;
-    margin: 10px 0;
+    margin: clamp(8px, 1vw, 14px) 0;
     letter-spacing: 1px;
   }
 
+  /* ── META ── */
   .meta {
     display: flex;
-    gap: 48px;
-    margin-bottom: 40px;
+    gap: clamp(24px, 4vw, 64px);
+    margin-bottom: clamp(28px, 4vw, 52px);
+    flex-wrap: wrap;
   }
 
-  .meta-item { display: flex; flex-direction: column; gap: 10px; }
-  .meta-lbl  { font-size: 6px; color: #333; letter-spacing: 2px; }
-  .meta-val  { font-size: 9px; }
+  .meta-item { display: flex; flex-direction: column; gap: clamp(6px, 0.8vw, 12px); }
+  .meta-lbl  { font-size: clamp(7px, 0.8vw, 10px); color: #333; letter-spacing: 2px; }
+  .meta-val  { font-size: clamp(10px, 1.4vw, 18px); }
 
+  /* ── PERIOD ROWS ── */
   .period-row {
     display: flex;
     align-items: center;
-    gap: 18px;
-    padding: 11px 0;
+    gap: clamp(12px, 2vw, 28px);
+    padding: clamp(10px, 1.4vw, 18px) 0;
     border-top: 1px solid #111;
   }
   .period-row:last-child { border-bottom: 1px solid #111; }
 
-  .pname { font-size: 7px; color: #555; width: 90px; letter-spacing: 1px; }
-  .ptemp { font-size: 9px; width: 52px; }
-  .pwind { font-size: 6px; color: #444; flex: 1; text-align: right; letter-spacing: 1px; }
+  .pname {
+    font-size: clamp(8px, 1vw, 13px);
+    color: #555;
+    width: clamp(72px, 9vw, 120px);
+    letter-spacing: 1px;
+    flex-shrink: 0;
+  }
+  .ptemp {
+    font-size: clamp(10px, 1.4vw, 18px);
+    width: clamp(48px, 6vw, 80px);
+    flex-shrink: 0;
+  }
+  .pwind {
+    font-size: clamp(7px, 0.9vw, 11px);
+    color: #444;
+    flex: 1;
+    text-align: right;
+    letter-spacing: 1px;
+  }
 
+  /* ── FORECAST ── */
   .forecast-row {
     display: flex;
     align-items: center;
-    gap: 10px;
-    padding: 9px 0;
+    gap: clamp(6px, 1vw, 14px);
+    padding: clamp(8px, 1.2vw, 16px) 0;
     border-top: 1px solid #111;
   }
   .forecast-row:last-child { border-bottom: 1px solid #111; }
 
-  .fday       { font-size: 6px; color: #444; width: 28px; letter-spacing: 1px; }
+  .fday {
+    font-size: clamp(7px, 0.85vw, 11px);
+    color: #444;
+    width: clamp(22px, 2.8vw, 36px);
+    letter-spacing: 1px;
+    flex-shrink: 0;
+  }
   .fday.today { color: #fff; }
-  .flow       { font-size: 6px; color: #444; min-width: 22px; text-align: right; }
-  .fhigh      { font-size: 7px; min-width: 22px; text-align: right; }
 
-  .range-wrap { flex: 1; height: 2px; background: #111; position: relative; }
-  .range-fill { position: absolute; top: 0; height: 2px; background: #fff; opacity: 0.25; }
+  .flow {
+    font-size: clamp(7px, 0.85vw, 10px);
+    color: #444;
+    min-width: clamp(18px, 2.5vw, 30px);
+    text-align: right;
+    flex-shrink: 0;
+  }
+  .fhigh {
+    font-size: clamp(8px, 1vw, 12px);
+    min-width: clamp(18px, 2.5vw, 30px);
+    text-align: right;
+    flex-shrink: 0;
+  }
 
+  .range-wrap {
+    flex: 1;
+    height: 2px;
+    background: #111;
+    position: relative;
+    min-width: 20px;
+  }
+  .range-fill {
+    position: absolute;
+    top: 0;
+    height: 2px;
+    background: #fff;
+    opacity: 0.2;
+  }
+
+  /* ── LOADING ── */
   .loading {
-    font-size: 8px;
+    font-size: clamp(8px, 1.2vw, 14px);
     color: #333;
     letter-spacing: 3px;
     animation: blink 1s step-end infinite;
@@ -152,6 +216,47 @@
     vertical-align: middle;
     flex-shrink: 0;
   }
+
+  /* ══════════════════════════════════════════
+     MOBILE — single column, all stacked
+  ══════════════════════════════════════════ */
+  @media (max-width: 640px) {
+    body { padding: 24px 20px; }
+
+    .layout {
+      flex-direction: column;
+      gap: 40px;
+    }
+
+    .col-right { width: 100%; }
+
+    .city      { font-size: clamp(26px, 9vw, 44px); }
+    .temp-now  { font-size: clamp(52px, 18vw, 80px); }
+
+    .meta { gap: 28px; }
+
+    .pname { width: 80px; }
+
+    .forecast-row { gap: 8px; }
+  }
+
+  /* ══════════════════════════════════════════
+     TABLET — slightly tighter right column
+  ══════════════════════════════════════════ */
+  @media (min-width: 641px) and (max-width: 1024px) {
+    .col-right { width: clamp(140px, 28vw, 200px); }
+    .city      { font-size: clamp(24px, 4.5vw, 48px); }
+  }
+
+  /* ══════════════════════════════════════════
+     LARGE SCREENS — give things more room
+  ══════════════════════════════════════════ */
+  @media (min-width: 1600px) {
+    body { padding: 64px 96px; }
+    .city     { font-size: clamp(56px, 4.5vw, 88px); }
+    .temp-now { font-size: clamp(80px, 7vw, 120px); }
+    .col-right { width: 300px; }
+  }
 </style>
 </head>
 <body>
@@ -159,9 +264,6 @@
 
 <script>
 // ── PIXEL ICONS ────────────────────────────────────────────────────────────
-// Each pixel defined as [col, row] on an 8x8 grid (0-indexed)
-// shade: 2=bright white, 1=mid grey, 0=dark grey
-
 function pxIcon(pixels, size) {
   const c = size / 8;
   let s = '';
@@ -174,15 +276,11 @@ function pxIcon(pixels, size) {
 
 const ICONS = {
   sun: [
-    [3,0,1],[4,0,1],
-    [0,3,1],[7,3,1],
-    [1,1,1],[6,1,1],
+    [3,0,1],[4,0,1],[0,3,1],[7,3,1],[1,1,1],[6,1,1],
     [2,2,2],[3,2,2],[4,2,2],[5,2,2],
     [1,3,2],[2,3,2],[3,3,2],[4,3,2],[5,3,2],[6,3,2],
     [2,4,2],[3,4,2],[4,4,2],[5,4,2],
-    [1,5,1],[6,5,1],
-    [0,4,1],[7,4,1],
-    [3,7,1],[4,7,1],
+    [1,5,1],[6,5,1],[0,4,1],[7,4,1],[3,7,1],[4,7,1],
   ],
   cloud: [
     [2,1,1],[3,1,2],[4,1,2],[5,1,1],
@@ -192,9 +290,7 @@ const ICONS = {
     [1,5,1],[2,5,1],[3,5,1],[4,5,1],[5,5,1],[6,5,1],
   ],
   partly: [
-    [5,0,1],[6,0,1],
-    [4,1,1],[7,1,1],
-    [5,2,1],[6,2,1],
+    [5,0,1],[6,0,1],[4,1,1],[7,1,1],[5,2,1],[6,2,1],
     [1,2,1],[2,2,2],[3,2,2],[4,2,1],
     [0,3,2],[1,3,2],[2,3,2],[3,3,2],[4,3,2],[5,3,1],
     [0,4,2],[1,4,2],[2,4,2],[3,4,2],[4,4,2],[5,4,1],
@@ -204,10 +300,8 @@ const ICONS = {
     [2,0,1],[3,0,2],[4,0,2],[5,0,1],
     [1,1,2],[2,1,2],[3,1,2],[4,1,2],[5,1,2],[6,1,2],
     [0,2,2],[1,2,2],[2,2,2],[3,2,2],[4,2,2],[5,2,2],[6,2,2],[7,2,2],
-    [1,4,1],[4,4,1],[7,4,1],
-    [0,5,1],[3,5,1],[6,5,1],
-    [1,6,1],[4,6,1],[7,6,1],
-    [0,7,1],[3,7,1],[6,7,1],
+    [1,4,1],[4,4,1],[7,4,1],[0,5,1],[3,5,1],[6,5,1],
+    [1,6,1],[4,6,1],[7,6,1],[0,7,1],[3,7,1],[6,7,1],
   ],
   snow: [
     [2,0,1],[3,0,2],[4,0,2],[5,0,1],
@@ -215,18 +309,14 @@ const ICONS = {
     [0,2,2],[1,2,2],[2,2,2],[3,2,2],[4,2,2],[5,2,2],[6,2,2],[7,2,2],
     [3,4,2],[4,4,2],
     [1,5,2],[2,5,2],[3,5,2],[4,5,2],[5,5,2],[6,5,2],
-    [3,6,2],[4,6,2],
-    [2,7,1],[5,7,1],
+    [3,6,2],[4,6,2],[2,7,1],[5,7,1],
   ],
   thunder: [
     [2,0,1],[3,0,2],[4,0,2],[5,0,1],
     [1,1,2],[2,1,2],[3,1,2],[4,1,2],[5,1,2],[6,1,2],
     [0,2,2],[1,2,2],[2,2,2],[3,2,2],[4,2,2],[5,2,2],[6,2,2],[7,2,2],
-    [4,3,2],[5,3,2],
-    [3,4,2],[4,4,2],
-    [2,5,2],[3,5,2],[4,5,2],
-    [3,6,2],[4,6,2],
-    [4,7,1],
+    [4,3,2],[5,3,2],[3,4,2],[4,4,2],
+    [2,5,2],[3,5,2],[4,5,2],[3,6,2],[4,6,2],[4,7,1],
   ],
   fog: [
     [0,1,1],[1,1,2],[2,1,2],[3,1,2],[4,1,2],[5,1,2],[6,1,2],[7,1,1],
@@ -234,29 +324,19 @@ const ICONS = {
     [0,5,1],[1,5,2],[2,5,2],[3,5,2],[4,5,2],[5,5,2],[6,5,2],[7,5,1],
   ],
   moon: [
-    [4,0,1],[5,0,2],[6,0,1],
-    [3,1,1],[4,1,2],[5,2,2],[6,1,1],
-    [2,2,2],[3,2,2],[6,2,1],
-    [2,3,2],[3,3,2],[6,3,1],
-    [3,4,1],[4,4,2],[5,4,1],[6,4,1],
-    [4,5,1],[5,5,2],[6,5,1],
-    [5,6,1],[6,6,1],
+    [4,0,1],[5,0,2],[6,0,1],[3,1,1],[4,1,2],[5,2,2],[6,1,1],
+    [2,2,2],[3,2,2],[6,2,1],[2,3,2],[3,3,2],[6,3,1],
+    [3,4,1],[4,4,2],[5,4,1],[6,4,1],[4,5,1],[5,5,2],[6,5,1],[5,6,1],[6,6,1],
   ],
   arrUp: [
-    [3,1,2],[4,1,2],
-    [2,2,2],[3,2,2],[4,2,2],[5,2,2],
+    [3,1,2],[4,1,2],[2,2,2],[3,2,2],[4,2,2],[5,2,2],
     [1,3,2],[2,3,2],[3,3,2],[4,3,2],[5,3,2],[6,3,2],
-    [3,4,2],[4,4,2],
-    [3,5,2],[4,5,2],
-    [3,6,2],[4,6,2],
+    [3,4,2],[4,4,2],[3,5,2],[4,5,2],[3,6,2],[4,6,2],
   ],
   arrDn: [
-    [3,1,2],[4,1,2],
-    [3,2,2],[4,2,2],
-    [3,3,2],[4,3,2],
+    [3,1,2],[4,1,2],[3,2,2],[4,2,2],[3,3,2],[4,3,2],
     [1,4,2],[2,4,2],[3,4,2],[4,4,2],[5,4,2],[6,4,2],
-    [2,5,2],[3,5,2],[4,5,2],[5,5,2],
-    [3,6,2],[4,6,2],
+    [2,5,2],[3,5,2],[4,5,2],[5,5,2],[3,6,2],[4,6,2],
   ],
   arrEq: [
     [0,2,2],[1,2,2],[2,2,2],[3,2,2],[4,2,2],[5,2,2],[6,2,2],[7,2,2],
@@ -264,7 +344,17 @@ const ICONS = {
   ],
 };
 
-function wmoIcon(code, size) {
+// icon size — scales with viewport
+function iconSize(base) {
+  const w = window.innerWidth;
+  if (w < 480)  return Math.round(base * 1.4);
+  if (w < 768)  return Math.round(base * 1.2);
+  if (w > 1600) return Math.round(base * 1.6);
+  return base;
+}
+
+function wmoIcon(code, base) {
+  const size = iconSize(base);
   if (code === 0)  return pxIcon(ICONS.sun,     size);
   if (code <= 2)   return pxIcon(ICONS.partly,  size);
   if (code === 3)  return pxIcon(ICONS.cloud,   size);
@@ -347,7 +437,7 @@ function render(data, city, lat, lon) {
     const code  = codes[Math.floor(codes.length/2)] || 0;
     return `<div class="period-row">
       <span class="pname">${p.name}</span>
-      ${wmoIcon(code, 18)}
+      ${wmoIcon(code, 20)}
       <span class="ptemp">${Math.round(avg(temps))}°C</span>
       <span class="pwind">${Math.round(avg(winds))} KM/H</span>
     </div>`;
@@ -372,7 +462,7 @@ function render(data, city, lat, lon) {
     const bW = ((f.hi-f.lo)/rng*100).toFixed(1);
     return `<div class="forecast-row">
       <span class="fday${f.today?' today':''}">${f.name}</span>
-      ${wmoIcon(f.code, 14)}
+      ${wmoIcon(f.code, 16)}
       <span class="flow">${f.lo}°</span>
       <div class="range-wrap"><div class="range-fill" style="left:${bL}%;width:${bW}%"></div></div>
       <span class="fhigh">${f.hi}°</span>
@@ -387,13 +477,13 @@ function render(data, city, lat, lon) {
         <div class="city">${city}</div>
         <div class="coords">${lat.toFixed(4)} N  ${lon.toFixed(4)} E</div>
 
-        ${wmoIcon(curCode, 44)}
+        ${wmoIcon(curCode, 48)}
         <div class="temp-now">${curTemp}<span class="temp-unit">°C</span></div>
         <div class="feels">ODCZUWALNA ${curFeels}°C</div>
 
         <div class="compare">
           POGODA JEST
-          <span class="compare-hl">${pxIcon(ICONS[arrKey],10)} ${cmpTxt}</span>
+          <span class="compare-hl">${pxIcon(ICONS[arrKey], iconSize(12))} ${cmpTxt}</span>
           ${wmoDesc(curCode)}
         </div>
 
