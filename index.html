@@ -38,14 +38,19 @@
   /* ── LAYOUT ── */
   .layout {
     display: flex;
-    gap: clamp(32px, 6vw, 100px);
+    gap: clamp(24px, 4vw, 72px);
     align-items: flex-start;
   }
 
   .col-left  { flex: 1; min-width: 0; }
 
+  .col-mid {
+    width: clamp(200px, 26vw, 340px);
+    flex-shrink: 0;
+  }
+
   .col-right {
-    width: clamp(160px, 22vw, 280px);
+    width: clamp(150px, 18vw, 250px);
     flex-shrink: 0;
   }
 
@@ -228,6 +233,7 @@
       gap: 40px;
     }
 
+    .col-mid   { width: 100%; }
     .col-right { width: 100%; }
 
     .city      { font-size: clamp(26px, 9vw, 44px); }
@@ -241,10 +247,11 @@
   }
 
   /* ══════════════════════════════════════════
-     TABLET — slightly tighter right column
+     TABLET — tighter columns
   ══════════════════════════════════════════ */
   @media (min-width: 641px) and (max-width: 1024px) {
-    .col-right { width: clamp(140px, 28vw, 200px); }
+    .col-mid   { width: clamp(160px, 28vw, 240px); }
+    .col-right { width: clamp(130px, 22vw, 180px); }
     .city      { font-size: clamp(24px, 4.5vw, 48px); }
   }
 
@@ -253,9 +260,10 @@
   ══════════════════════════════════════════ */
   @media (min-width: 1600px) {
     body { padding: 64px 96px; }
-    .city     { font-size: clamp(56px, 4.5vw, 88px); }
-    .temp-now { font-size: clamp(80px, 7vw, 120px); }
-    .col-right { width: 300px; }
+    .city      { font-size: clamp(56px, 4.5vw, 88px); }
+    .temp-now  { font-size: clamp(80px, 7vw, 120px); }
+    .col-mid   { width: 360px; }
+    .col-right { width: 280px; }
   }
 </style>
 </head>
@@ -501,7 +509,9 @@ function render(data, city, lat, lon) {
             <span class="meta-val">${Math.round(todayMin)}°C</span>
           </div>
         </div>
+      </div>
 
+      <div class="col-mid">
         <div class="label">POGODA NA CALY DZIEN</div>
         ${partsHTML}
       </div>
