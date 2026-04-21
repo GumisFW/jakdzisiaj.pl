@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>POGODA</title>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #000;
+    color: #fff;
+    font-family: 'Press Start 2P', monospace;
+    min-height: 100vh;
+    padding: 36px 48px;
+  }
+
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,0,0,0.10) 3px, rgba(0,0,0,0.10) 4px);
+    pointer-events: none;
+    z-index: 999;
+  }
+
+  .clock {
+    font-size: 6px;
+    color: #333;
+    letter-spacing: 2px;
+    margin-bottom: 36px;
+  }
+
+  .layout {
+    display: flex;
+    gap: 80px;
+    align-items: flex-start;
+  }
+
+  .col-left  { flex: 1; }
+  .col-right { width: 230px; flex-shrink: 0; }
+
+  .label {
+    font-size: 6px;
+    color: #444;
+    letter-spacing: 3px;
+    margin-bottom: 16px;
+  }
+
+  .city {
+    font-size: 20px;
+    line-height: 1.6;
+    margin-bottom: 6px;
+  }
+
+  .coords {
+    font-size: 6px;
+    color: #333;
+    letter-spacing: 2px;
+    margin-bottom: 36px;
+  }
+
+  .temp-now {
+    font-size: 52px;
+    line-height: 1;
+    margin: 14px 0 10px;
+  }
+
+  .temp-unit {
+    font-size: 16px;
+    color: #666;
+    vertical-align: super;
+    margin-left: 4px;
+  }
+
+  .feels {
+    font-size: 6px;
+    color: #444;
+    letter-spacing: 2px;
+    margin-bottom: 20px;
+  }
+
+  .compare {
+    font-size: 7px;
+    color: #666;
+    letter-spacing: 1px;
+    line-height: 2.4;
+    margin-bottom: 36px;
+  }
+
+  .compare-hl {
+    font-size: 8px;
+    color: #fff;
+    display: block;
+    margin: 10px 0;
+    letter-spacing: 1px;
+  }
+
+  .meta {
+    display: flex;
+    gap: 48px;
+    margin-bottom: 40px;
+  }
+
+  .meta-item { display: flex; flex-direction: column; gap: 10px; }
+  .meta-lbl  { font-size: 6px; color: #333; letter-spacing: 2px; }
+  .meta-val  { font-size: 9px; }
+
+  .period-row {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    padding: 11px 0;
+    border-top: 1px solid #111;
+  }
+  .period-row:last-child { border-bottom: 1px solid #111; }
+
+  .pname { font-size: 7px; color: #555; width: 90px; letter-spacing: 1px; }
+  .ptemp { font-size: 9px; width: 52px; }
+  .pwind { font-size: 6px; color: #444; flex: 1; text-align: right; letter-spacing: 1px; }
+
+  .forecast-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 0;
+    border-top: 1px solid #111;
+  }
+  .forecast-row:last-child { border-bottom: 1px solid #111; }
+
+  .fday       { font-size: 6px; color: #444; width: 28px; letter-spacing: 1px; }
+  .fday.today { color: #fff; }
+  .flow       { font-size: 6px; color: #444; min-width: 22px; text-align: right; }
+  .fhigh      { font-size: 7px; min-width: 22px; text-align: right; }
+
+  .range-wrap { flex: 1; height: 2px; background: #111; position: relative; }
+  .range-fill { position: absolute; top: 0; height: 2px; background: #fff; opacity: 0.25; }
+
+  .loading {
+    font-size: 8px;
+    color: #333;
+    letter-spacing: 3px;
+    animation: blink 1s step-end infinite;
+    padding-top: 40px;
+  }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.1} }
+
+  .px-icon {
+    display: inline-block;
+    image-rendering: pixelated;
+    vertical-align: middle;
+    flex-shrink: 0;
+  }
+</style>
+</head>
+<body>
+<div id="app"><div class="loading">LADOWANIE...</div></div>
+
+<script>
+// ── PIXEL ICONS ────────────────────────────────────────────────────────────
+// Each pixel defined as [col, row] on an 8x8 grid (0-indexed)
+// shade: 2=bright white, 1=mid grey, 0=dark grey
+
+function pxIcon(pixels, size) {
+  const c = size / 8;
+  let s = '';
+  for (const [x, y, v] of pixels) {
+    const fill = v === 2 ? '#fff' : v === 1 ? '#777' : '#333';
+    s += `<rect x="${x*c}" y="${y*c}" width="${c}" height="${c}" fill="${fill}"/>`;
+  }
+  return `<svg class="px-icon" width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" xmlns="http://www.w3.org/2000/svg">${s}</svg>`;
+}
+
+const ICONS = {
+  sun: [
+    [3,0,1],[4,0,1],
+    [0,3,1],[7,3,1],
+    [1,1,1],[6,1,1],
+    [2,2,2],[3,2,2],[4,2,2],[5,2,2],
+    [1,3,2],[2,3,2],[3,3,2],[4,3,2],[5,3,2],[6,3,2],
+    [2,4,2],[3,4,2],[4,4,2],[5,4,2],
+    [1,5,1],[6,5,1],
+    [0,4,1],[7,4,1],
+    [3,7,1],[4,7,1],
+  ],
+  cloud: [
+    [2,1,1],[3,1,2],[4,1,2],[5,1,1],
+    [1,2,2],[2,2,2],[3,2,2],[4,2,2],[5,2,2],[6,2,2],
+    [0,3,2],[1,3,2],[2,3,2],[3,3,2],[4,3,2],[5,3,2],[6,3,2],[7,3,2],
+    [0,4,2],[1,4,2],[2,4,2],[3,4,2],[4,4,2],[5,4,2],[6,4,2],[7,4,2],
+    [1,5,1],[2,5,1],[3,5,1],[4,5,1],[5,5,1],[6,5,1],
+  ],
+  partly: [
+    [5,0,1],[6,0,1],
+    [4,1,1],[7,1,1],
+    [5,2,1],[6,2,1],
+    [1,2,1],[2,2,2],[3,2,2],[4,2,1],
+    [0,3,2],[1,3,2],[2,3,2],[3,3,2],[4,3,2],[5,3,1],
+    [0,4,2],[1,4,2],[2,4,2],[3,4,2],[4,4,2],[5,4,1],
+    [1,5,1],[2,5,1],[3,5,1],[4,5,1],
+  ],
+  rain: [
+    [2,0,1],[3,0,2],[4,0,2],[5,0,1],
+    [1,1,2],[2,1,2],[3,1,2],[4,1,2],[5,1,2],[6,1,2],
+    [0,2,2],[1,2,2],[2,2,2],[3,2,2],[4,2,2],[5,2,2],[6,2,2],[7,2,2],
+    [1,4,1],[4,4,1],[7,4,1],
+    [0,5,1],[3,5,1],[6,5,1],
+    [1,6,1],[4,6,1],[7,6,1],
+    [0,7,1],[3,7,1],[6,7,1],
+  ],
+  snow: [
+    [2,0,1],[3,0,2],[4,0,2],[5,0,1],
+    [1,1,2],[2,1,2],[3,1,2],[4,1,2],[5,1,2],[6,1,2],
+    [0,2,2],[1,2,2],[2,2,2],[3,2,2],[4,2,2],[5,2,2],[6,2,2],[7,2,2],
+    [3,4,2],[4,4,2],
+    [1,5,2],[2,5,2],[3,5,2],[4,5,2],[5,5,2],[6,5,2],
+    [3,6,2],[4,6,2],
+    [2,7,1],[5,7,1],
+  ],
+  thunder: [
+    [2,0,1],[3,0,2],[4,0,2],[5,0,1],
+    [1,1,2],[2,1,2],[3,1,2],[4,1,2],[5,1,2],[6,1,2],
+    [0,2,2],[1,2,2],[2,2,2],[3,2,2],[4,2,2],[5,2,2],[6,2,2],[7,2,2],
+    [4,3,2],[5,3,2],
+    [3,4,2],[4,4,2],
+    [2,5,2],[3,5,2],[4,5,2],
+    [3,6,2],[4,6,2],
+    [4,7,1],
+  ],
+  fog: [
+    [0,1,1],[1,1,2],[2,1,2],[3,1,2],[4,1,2],[5,1,2],[6,1,2],[7,1,1],
+    [0,3,1],[1,3,1],[2,3,2],[3,3,2],[4,3,2],[5,3,2],[6,3,1],[7,3,1],
+    [0,5,1],[1,5,2],[2,5,2],[3,5,2],[4,5,2],[5,5,2],[6,5,2],[7,5,1],
+  ],
+  moon: [
+    [4,0,1],[5,0,2],[6,0,1],
+    [3,1,1],[4,1,2],[5,2,2],[6,1,1],
+    [2,2,2],[3,2,2],[6,2,1],
+    [2,3,2],[3,3,2],[6,3,1],
+    [3,4,1],[4,4,2],[5,4,1],[6,4,1],
+    [4,5,1],[5,5,2],[6,5,1],
+    [5,6,1],[6,6,1],
+  ],
+  arrUp: [
+    [3,1,2],[4,1,2],
+    [2,2,2],[3,2,2],[4,2,2],[5,2,2],
+    [1,3,2],[2,3,2],[3,3,2],[4,3,2],[5,3,2],[6,3,2],
+    [3,4,2],[4,4,2],
+    [3,5,2],[4,5,2],
+    [3,6,2],[4,6,2],
+  ],
+  arrDn: [
+    [3,1,2],[4,1,2],
+    [3,2,2],[4,2,2],
+    [3,3,2],[4,3,2],
+    [1,4,2],[2,4,2],[3,4,2],[4,4,2],[5,4,2],[6,4,2],
+    [2,5,2],[3,5,2],[4,5,2],[5,5,2],
+    [3,6,2],[4,6,2],
+  ],
+  arrEq: [
+    [0,2,2],[1,2,2],[2,2,2],[3,2,2],[4,2,2],[5,2,2],[6,2,2],[7,2,2],
+    [0,5,2],[1,5,2],[2,5,2],[3,5,2],[4,5,2],[5,5,2],[6,5,2],[7,5,2],
+  ],
+};
+
+function wmoIcon(code, size) {
+  if (code === 0)  return pxIcon(ICONS.sun,     size);
+  if (code <= 2)   return pxIcon(ICONS.partly,  size);
+  if (code === 3)  return pxIcon(ICONS.cloud,   size);
+  if (code <= 48)  return pxIcon(ICONS.fog,     size);
+  if (code <= 67)  return pxIcon(ICONS.rain,    size);
+  if (code <= 77)  return pxIcon(ICONS.snow,    size);
+  if (code <= 82)  return pxIcon(ICONS.rain,    size);
+  if (code <= 86)  return pxIcon(ICONS.snow,    size);
+  return pxIcon(ICONS.thunder, size);
+}
+
+function wmoDesc(code) {
+  if (code === 0)  return 'BEZCHMURNIE';
+  if (code <= 2)   return 'CZ. ZACHMURZENIE';
+  if (code === 3)  return 'POCHMURNO';
+  if (code <= 48)  return 'MGLA';
+  if (code <= 55)  return 'MZAWKA';
+  if (code <= 67)  return 'DESZCZ';
+  if (code <= 77)  return 'SNIEG';
+  if (code <= 82)  return 'PRZELOTNY DESZCZ';
+  if (code <= 86)  return 'OPADY SNIEGU';
+  return 'BURZA';
+}
+
+const pad = n => String(n).padStart(2,'0');
+const avg = a => a.length ? a.reduce((x,y)=>x+y)/a.length : 0;
+const DAYS = ['ND','PN','WT','SR','CZ','PT','SO'];
+const PARTS = [
+  {name:'RANO',     s:6,  e:11},
+  {name:'POLUDNIE', s:11, e:15},
+  {name:'WIECZOR',  s:17, e:21},
+  {name:'NOC',      s:21, e:24},
+];
+
+async function getCityName(lat, lon) {
+  try {
+    const r = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json&accept-language=pl`);
+    const d = await r.json();
+    return (d.address?.city || d.address?.town || d.address?.village || 'TWOJA LOKALIZACJA').toUpperCase();
+  } catch { return 'TWOJA LOKALIZACJA'; }
+}
+
+async function fetchWeather(lat, lon) {
+  const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}`
+    + `&hourly=temperature_2m,weathercode,windspeed_10m,apparent_temperature`
+    + `&daily=weathercode,temperature_2m_max,temperature_2m_min`
+    + `&timezone=auto&past_days=1&forecast_days=11`;
+  return (await fetch(url)).json();
+}
+
+function render(data, city, lat, lon) {
+  const h = data.hourly, d = data.daily;
+  const now = new Date();
+  const todayStr = now.toISOString().slice(0,10);
+  const tIdx = d.time.findIndex(t => t === todayStr);
+  const yIdx = tIdx - 1;
+  const hOff = h.time.findIndex(t => t.startsWith(todayStr));
+  const curI = hOff + now.getHours();
+
+  const curTemp  = Math.round(h.temperature_2m[curI]);
+  const curFeels = Math.round(h.apparent_temperature[curI]);
+  const curCode  = h.weathercode[curI];
+  const curWind  = Math.round(h.windspeed_10m[curI]);
+  const todayMax = d.temperature_2m_max[tIdx];
+  const todayMin = d.temperature_2m_min[tIdx];
+  const yestMax  = yIdx >= 0 ? d.temperature_2m_max[yIdx] : todayMax;
+  const diff     = todayMax - yestMax;
+
+  const arrKey = diff > 2 ? 'arrUp' : diff < -2 ? 'arrDn' : 'arrEq';
+  const cmpTxt = diff > 2
+    ? `CIEPLEJ NIZ WCZORAJ (+${Math.round(diff)}C)`
+    : diff < -2
+    ? `CHLODNIEJ NIZ WCZORAJ (${Math.round(diff)}C)`
+    : 'PODOBNIE JAK WCZORAJ';
+
+  const partsHTML = PARTS.map(p => {
+    const temps = h.temperature_2m.slice(hOff+p.s, hOff+p.e);
+    const winds = h.windspeed_10m.slice(hOff+p.s, hOff+p.e);
+    const codes = h.weathercode.slice(hOff+p.s, hOff+p.e);
+    const code  = codes[Math.floor(codes.length/2)] || 0;
+    return `<div class="period-row">
+      <span class="pname">${p.name}</span>
+      ${wmoIcon(code, 18)}
+      <span class="ptemp">${Math.round(avg(temps))}°C</span>
+      <span class="pwind">${Math.round(avg(winds))} KM/H</span>
+    </div>`;
+  }).join('');
+
+  const forecast = [];
+  for (let i = tIdx; i < Math.min(tIdx+10, d.time.length); i++) {
+    const dt = new Date(d.time[i]+'T12:00:00');
+    forecast.push({
+      name: i===tIdx ? 'DZIS' : DAYS[dt.getDay()],
+      today: i===tIdx,
+      code: d.weathercode[i],
+      hi: Math.round(d.temperature_2m_max[i]),
+      lo: Math.round(d.temperature_2m_min[i]),
+    });
+  }
+  const allLo = forecast.map(f=>f.lo), allHi = forecast.map(f=>f.hi);
+  const minT = Math.min(...allLo), maxT = Math.max(...allHi), rng = maxT-minT||1;
+
+  const forecastHTML = forecast.map(f => {
+    const bL = ((f.lo-minT)/rng*100).toFixed(1);
+    const bW = ((f.hi-f.lo)/rng*100).toFixed(1);
+    return `<div class="forecast-row">
+      <span class="fday${f.today?' today':''}">${f.name}</span>
+      ${wmoIcon(f.code, 14)}
+      <span class="flow">${f.lo}°</span>
+      <div class="range-wrap"><div class="range-fill" style="left:${bL}%;width:${bW}%"></div></div>
+      <span class="fhigh">${f.hi}°</span>
+    </div>`;
+  }).join('');
+
+  document.getElementById('app').innerHTML = `
+    <div class="clock" id="clk">${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}</div>
+    <div class="layout">
+      <div class="col-left">
+        <div class="label">WITAJ W</div>
+        <div class="city">${city}</div>
+        <div class="coords">${lat.toFixed(4)} N  ${lon.toFixed(4)} E</div>
+
+        ${wmoIcon(curCode, 44)}
+        <div class="temp-now">${curTemp}<span class="temp-unit">°C</span></div>
+        <div class="feels">ODCZUWALNA ${curFeels}°C</div>
+
+        <div class="compare">
+          POGODA JEST
+          <span class="compare-hl">${pxIcon(ICONS[arrKey],10)} ${cmpTxt}</span>
+          ${wmoDesc(curCode)}
+        </div>
+
+        <div class="meta">
+          <div class="meta-item">
+            <span class="meta-lbl">WIATR</span>
+            <span class="meta-val">${curWind} KM/H</span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-lbl">MAKS</span>
+            <span class="meta-val">${Math.round(todayMax)}°C</span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-lbl">MIN</span>
+            <span class="meta-val">${Math.round(todayMin)}°C</span>
+          </div>
+        </div>
+
+        <div class="label">POGODA NA CALY DZIEN</div>
+        ${partsHTML}
+      </div>
+
+      <div class="col-right">
+        <div class="label">PROGNOZA 10 DNI</div>
+        ${forecastHTML}
+      </div>
+    </div>`;
+
+  setInterval(() => {
+    const n = new Date(), el = document.getElementById('clk');
+    if (el) el.textContent = `${pad(n.getHours())}:${pad(n.getMinutes())}:${pad(n.getSeconds())}`;
+  }, 1000);
+}
+
+async function main() {
+  const pos = await new Promise(res =>
+    navigator.geolocation.getCurrentPosition(res, () => res(null), {timeout: 8000})
+  );
+  const lat = pos ? pos.coords.latitude  : 51.1079;
+  const lon = pos ? pos.coords.longitude : 17.0385;
+  const [data, city] = await Promise.all([fetchWeather(lat, lon), getCityName(lat, lon)]);
+  render(data, city, lat, lon);
+}
+
+main().catch(e => {
+  document.getElementById('app').innerHTML = `<div class="loading">BLAD: ${e.message}</div>`;
+});
+</script>
+</body>
+</html>
