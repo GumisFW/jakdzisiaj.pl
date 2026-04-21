@@ -726,8 +726,11 @@
   const TEST_MODE = false;
   // ════════════════════════════════════════════
 
-  if (!TEST_MODE) {
+  function unlockAndStart() {
     document.getElementById('gate').classList.add('hidden');
+    main().catch(e => {
+      document.getElementById('app').innerHTML = `<div class="loading">BLAD: ${e.message}</div>`;
+    });
   }
 
   // Allow Enter key
@@ -739,12 +742,10 @@
     const val = document.getElementById('gate-pass').value.trim().toLowerCase();
     const err = document.getElementById('gate-err');
     if (val === 'pogodynka') {
-      // save to session so refresh doesn't re-ask
       sessionStorage.setItem('wx_access', '1');
-      document.getElementById('gate').classList.add('hidden');
+      unlockAndStart();
     } else {
       err.textContent = 'NIEPRAWIDLOWE HASLO. SPROBUJ PONOWNIE.';
-      // re-trigger animation by cloning
       const clone = err.cloneNode(true);
       err.parentNode.replaceChild(clone, err);
       document.getElementById('gate-pass').value = '';
@@ -752,10 +753,14 @@
     }
   }
 
-  // Skip gate if already authenticated this session
-  if (TEST_MODE && sessionStorage.getItem('wx_access') === '1') {
-    document.getElementById('gate').classList.add('hidden');
+  if (!TEST_MODE) {
+    // Bramka wyłączona — od razu startuj
+    unlockAndStart();
+  } else if (sessionStorage.getItem('wx_access') === '1') {
+    // Już zalogowany w tej sesji — pomiń bramkę
+    unlockAndStart();
   }
+  // W przeciwnym razie czekamy na wpisanie hasła
 </script>
 </div>
 <!-- END GATE -->
@@ -1263,10 +1268,6 @@ async function main() {
   // Fallback: try directly, show prompt on failure
   await tryGeolocate();
 }
-
-main().catch(e => {
-  document.getElementById('app').innerHTML = `<div class="loading">BLAD: ${e.message}</div>`;
-});
 </script>
 </body>
 </html>
