@@ -216,6 +216,56 @@
   }
   @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.1} }
 
+  /* ── LOCATION PROMPT ── */
+  .loc-prompt {
+    padding-top: clamp(40px, 8vh, 80px);
+    max-width: 600px;
+  }
+  .loc-label {
+    font-size: clamp(6px, 0.8vw, 9px);
+    color: #333;
+    letter-spacing: 3px;
+    margin-bottom: clamp(16px, 2vw, 28px);
+  }
+  .loc-title {
+    font-size: clamp(16px, 3vw, 36px);
+    color: #fff;
+    line-height: 1.6;
+    margin-bottom: clamp(20px, 3vw, 36px);
+  }
+  .loc-desc {
+    font-size: clamp(7px, 0.9vw, 11px);
+    color: #444;
+    letter-spacing: 1px;
+    line-height: 2.6;
+    margin-bottom: clamp(28px, 4vw, 48px);
+  }
+  .loc-btn {
+    font-family: 'Press Start 2P', monospace;
+    font-size: clamp(8px, 1vw, 12px);
+    color: #000;
+    background: #fff;
+    border: none;
+    padding: clamp(10px, 1.5vw, 18px) clamp(16px, 2.5vw, 32px);
+    cursor: pointer;
+    letter-spacing: 2px;
+    image-rendering: pixelated;
+  }
+  .loc-btn:hover { background: #bbb; }
+  .loc-btn:active { background: #888; }
+  .loc-error {
+    font-size: clamp(7px, 0.85vw, 10px);
+    color: #555;
+    letter-spacing: 1px;
+    margin-top: clamp(16px, 2vw, 24px);
+    line-height: 2.4;
+  }
+  .loc-error a {
+    color: #777;
+    text-decoration: none;
+    border-bottom: 1px solid #333;
+  }
+
   .px-icon {
     display: inline-block;
     image-rendering: pixelated;
@@ -531,14 +581,90 @@ function render(data, city, lat, lon) {
   }, 1000);
 }
 
+function showLocationPrompt(errorCode) {
+  const msgs = {
+    1: 'DOSTEP DO LOKALIZACJI ZOSTAL ZABLOKOWANY.',
+    2: 'NIE MOZNA USTALIC LOKALIZACJI.',
+    3: 'PRZEKROCZONO CZAS OCZEKIWANIA.',
+    0: 'LOKALIZACJA NIEDOSTEPNA.',
+  };
+  const hint = errorCode === 1
+    ? 'Aby odblokować: kliknij ikonę kłódki lub "i" w pasku adresu przeglądarki → Lokalizacja → Zezwól → odśwież stronę.'
+    : 'Sprawdź czy przeglądarka ma dostęp do lokalizacji i spróbuj ponownie.';
+
+  document.getElementById('app').innerHTML = `
+    <div class="loc-prompt">
+      <div class="loc-label">JAKDZISIAJ.PL</div>
+      <div class="loc-title">POTRZEBUJEMY<br>TWOJEJ LOKALIZACJI</div>
+      <div class="loc-desc">
+        TA STRONA POKAZUJE POGODE DLA TWOJEGO<br>
+        AKTUALNEGO MIEJSCA. ABY TO DZIALALO,<br>
+        MUSISZ ZEZWOLIC NA DOSTEP DO LOKALIZACJI.
+      </div>
+      <button class="loc-btn" onclick="tryGeolocate()">▸ UDOSTEPNIJ LOKALIZACJE</button>
+      <div class="loc-error">
+        ${errorCode !== undefined ? `BLAD: ${msgs[errorCode] || msgs[0]}<br>${hint}` : ''}
+      </div>
+    </div>`;
+}
+
+async function tryGeolocate() {
+  document.getElementById('app').innerHTML = `<div class="loading">POBIERANIE LOKALIZACJI...</div>`;
+
+  const pos = await new Promise((res, rej) =>
+    navigator.geolocation.getCurrentPosition(res, rej, {
+      timeout: 10000,
+      enableHighAccuracy: false,
+      maximumAge: 300000,
+    })
+  ).catch(err => { return { error: err }; });
+
+  if (pos?.error) {
+    showLocationPrompt(pos.error.code);
+    return;
+  }
+
+  try {
+    document.getElementById('app').innerHTML = `<div class="loading">LADOWANIE POGODY...</div>`;
+    const lat = pos.coords.latitude;
+    const lon = pos.coords.longitude;
+    const [data, city] = await Promise.all([fetchWeather(lat, lon), getCityName(lat, lon)]);
+    render(data, city, lat, lon);
+  } catch(e) {
+    document.getElementById('app').innerHTML = `<div class="loading">BLAD: ${e.message}</div>`;
+  }
+}
+
 async function main() {
-  const pos = await new Promise(res =>
-    navigator.geolocation.getCurrentPosition(res, () => res(null), {timeout: 8000})
-  );
-  const lat = pos ? pos.coords.latitude  : 51.1079;
-  const lon = pos ? pos.coords.longitude : 17.0385;
-  const [data, city] = await Promise.all([fetchWeather(lat, lon), getCityName(lat, lon)]);
-  render(data, city, lat, lon);
+  // Check if geolocation is supported at all
+  if (!navigator.geolocation) {
+    showLocationPrompt(0);
+    return;
+  }
+
+  // Check existing permission state if API available
+  if (navigator.permissions) {
+    try {
+      const perm = await navigator.permissions.query({ name: 'geolocation' });
+      if (perm.state === 'denied') {
+        showLocationPrompt(1);
+        return;
+      }
+      if (perm.state === 'granted') {
+        // Permission already granted — fetch silently
+        await tryGeolocate();
+        return;
+      }
+      // 'prompt' state — show our own prompt first for better UX
+      showLocationPrompt();
+      return;
+    } catch(_) {
+      // permissions API not available, fall through
+    }
+  }
+
+  // Fallback: try directly, show prompt on failure
+  await tryGeolocate();
 }
 
 main().catch(e => {
