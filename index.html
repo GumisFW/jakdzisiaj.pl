@@ -8,20 +8,58 @@
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
 body {
-  background: #000;
-  color: #fff;
+  background: #000; color: #fff;
   font-family: 'Press Start 2P', monospace;
   min-height: 100vh;
-  padding: clamp(20px, 4vw, 56px) clamp(20px, 5vw, 72px);
+  padding: clamp(20px,4vw,56px) clamp(20px,5vw,72px);
+  padding-top: clamp(64px,7vw,92px);
 }
 body::after {
   content: '';
-  position: fixed;
-  inset: 0;
+  position: fixed; inset: 0;
   background: repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,0,0,0.08) 3px, rgba(0,0,0,0.08) 4px);
-  pointer-events: none;
-  z-index: 999;
+  pointer-events: none; z-index: 998;
 }
+
+/* ── HAMBURGER ── */
+.ham-btn {
+  position: fixed;
+  top: clamp(14px,2vw,24px); left: clamp(16px,3vw,32px);
+  z-index: 1100;
+  background: #000; border: none; cursor: pointer;
+  padding: 8px; display: flex; flex-direction: column; gap: 5px;
+}
+.ham-btn span { display: block; width: clamp(20px,2vw,28px); height: 2px; background: #fff; }
+.ham-btn:hover span { background: #888; }
+
+/* ── SIDE PANEL ── */
+.panel-overlay {
+  position: fixed; inset: 0;
+  z-index: 1040; display: none;
+  background: rgba(0,0,0,0.6);
+}
+.panel-overlay.open { display: block; }
+
+.side-panel {
+  position: fixed; top: 0; left: 0;
+  width: clamp(280px,34vw,420px); height: 100vh;
+  background: #000; border-right: 1px solid #1a1a1a;
+  z-index: 1050;
+  transform: translateX(-100%);
+  transition: transform 0.18s steps(6);
+  overflow-y: auto;
+  padding: clamp(64px,7vw,88px) clamp(20px,2.5vw,32px) clamp(24px,3vw,40px);
+  display: flex; flex-direction: column; gap: 16px;
+}
+.side-panel.open { transform: translateX(0); }
+
+.panel-top {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 4px;
+}
+.panel-title { font-size: clamp(7px,.9vw,10px); color: #333; letter-spacing: 3px; }
+.panel-close { font-family: 'Press Start 2P', monospace; font-size: clamp(8px,1vw,12px); color: #333; background: none; border: none; cursor: pointer; padding: 4px; }
+.panel-close:hover { color: #fff; }
 
 /* ── SHARED ── */
 .label { font-size: clamp(7px,.9vw,11px); color: #444; letter-spacing: 3px; margin-bottom: clamp(12px,1.5vw,20px); }
@@ -32,14 +70,7 @@ body::after {
 @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.1} }
 
 /* ── BUTTONS ── */
-.px-btn {
-  font-family: 'Press Start 2P', monospace;
-  font-size: clamp(7px,.9vw,11px);
-  color: #000; background: #fff;
-  border: none; cursor: pointer;
-  padding: clamp(10px,1.4vw,16px) clamp(14px,2.2vw,28px);
-  letter-spacing: 2px;
-}
+.px-btn { font-family: 'Press Start 2P', monospace; font-size: clamp(7px,.9vw,11px); color: #000; background: #fff; border: none; cursor: pointer; padding: clamp(10px,1.4vw,16px) clamp(14px,2.2vw,28px); letter-spacing: 2px; }
 .px-btn:hover { background: #ccc; }
 .px-btn:active { background: #888; }
 .px-btn.ghost { color: #555; background: transparent; border: 1px solid #222; }
@@ -53,37 +84,32 @@ body::after {
 .denied-desc strong { color: #777; font-weight: normal; }
 .denied-btns { display: flex; flex-wrap: wrap; gap: clamp(10px,1.5vw,18px); }
 
-/* ── MAP PICKER ── */
-.map-screen { display: flex; flex-direction: column; gap: clamp(16px,2.5vw,32px); }
-.map-screen-top { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 12px; }
-.map-screen-title { font-size: clamp(10px,1.5vw,18px); color: #fff; line-height: 1.7; }
-.map-picker { display: flex; gap: clamp(20px,3.5vw,56px); align-items: flex-start; flex-wrap: wrap; }
-.map-wrap { flex: 1; min-width: 260px; }
-.map-wrap svg { display: block; width: 100%; height: auto; }
-.map-city { cursor: pointer; }
-.map-city circle { fill: #1a1a1a; stroke: #3a3a3a; stroke-width: 1.5; }
-.map-city text { fill: #444; font-family: 'Press Start 2P', monospace; font-size: 5.5px; pointer-events: none; }
-.map-city:hover circle, .map-city.active circle { fill: #fff; stroke: #fff; }
-.map-city:hover text,   .map-city.active text   { fill: #fff; }
-.map-sidebar { width: clamp(180px,24vw,300px); flex-shrink: 0; display: flex; flex-direction: column; gap: 14px; }
-.sidebar-label { font-size: clamp(6px,.75vw,9px); color: #333; letter-spacing: 3px; margin-bottom: 6px; }
-.city-search {
-  font-family: 'Press Start 2P', monospace;
-  font-size: clamp(7px,.9vw,10px);
-  background: #000; color: #fff;
-  border: 1px solid #2a2a2a;
-  padding: clamp(8px,1.2vw,14px) clamp(10px,1.4vw,16px);
-  letter-spacing: 2px; outline: none; width: 100%; caret-color: #fff;
-}
+/* ── CITY PICKER ── */
+.picker-screen { display: flex; flex-direction: column; gap: clamp(16px,2.5vw,32px); }
+.picker-top { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 12px; margin-bottom: 4px; }
+.picker-title { font-size: clamp(10px,1.5vw,18px); color: #fff; line-height: 1.7; }
+.picker-layout { display: flex; gap: clamp(32px,5vw,80px); align-items: flex-start; }
+
+/* left: alphabetical list */
+.city-list-wrap { flex: 1; min-width: 0; column-count: 2; column-gap: clamp(16px,3vw,48px); }
+.alpha-group { break-inside: avoid; margin-bottom: clamp(12px,2vw,22px); }
+.alpha-letter { font-size: clamp(6px,.7vw,8px); color: #222; letter-spacing: 3px; border-bottom: 1px solid #111; padding-bottom: 5px; margin-bottom: 5px; }
+.city-item { font-size: clamp(7px,.85vw,10px); color: #444; padding: clamp(4px,.7vw,8px) 0; border-bottom: 1px solid #0a0a0a; cursor: pointer; letter-spacing: 1px; display: block; }
+.city-item:hover, .city-item.active { color: #fff; }
+
+/* right: search */
+.city-search-wrap { width: clamp(200px,26vw,320px); flex-shrink: 0; display: flex; flex-direction: column; gap: 12px; position: sticky; top: clamp(64px,7vw,88px); }
+.search-label { font-size: clamp(6px,.75vw,9px); color: #333; letter-spacing: 3px; margin-bottom: 4px; }
+.city-search { font-family: 'Press Start 2P', monospace; font-size: clamp(7px,.9vw,10px); background: #000; color: #fff; border: 1px solid #2a2a2a; padding: clamp(8px,1.2vw,14px) clamp(10px,1.4vw,16px); letter-spacing: 2px; outline: none; width: 100%; caret-color: #fff; }
 .city-search:focus { border-color: #555; }
 .city-search::placeholder { color: #1a1a1a; }
-.search-results { display: flex; flex-direction: column; max-height: 260px; overflow-y: auto; }
-.sr-item { font-size: clamp(7px,.85vw,10px); color: #555; padding: clamp(8px,1vw,12px) clamp(10px,1.4vw,14px); border-top: 1px solid #0e0e0e; cursor: pointer; letter-spacing: 1px; line-height: 1.8; }
+.search-results { display: flex; flex-direction: column; max-height: 55vh; overflow-y: auto; }
+.sr-item { font-size: clamp(7px,.85vw,10px); color: #555; padding: clamp(7px,1vw,11px) clamp(10px,1.4vw,14px); border-top: 1px solid #0e0e0e; cursor: pointer; letter-spacing: 1px; line-height: 1.8; }
 .sr-item:last-child { border-bottom: 1px solid #0e0e0e; }
 .sr-item:hover, .sr-item.active { color: #fff; background: #0a0a0a; }
 .sr-coords { display: block; font-size: clamp(5px,.6vw,7px); color: #2a2a2a; margin-top: 4px; }
 .search-hint { font-size: clamp(6px,.75vw,9px); color: #222; letter-spacing: 2px; padding: 10px 0; animation: blink 1s step-end infinite; }
-.selected-box { border-top: 1px solid #111; padding-top: 14px; display: flex; flex-direction: column; gap: 10px; }
+.selected-box { border-top: 1px solid #111; padding-top: 12px; display: flex; flex-direction: column; gap: 10px; }
 .selected-name { font-size: clamp(9px,1.1vw,14px); color: #fff; }
 .selected-coord { font-size: clamp(6px,.7vw,8px); color: #333; letter-spacing: 1px; }
 
@@ -93,7 +119,7 @@ body::after {
 .col-left  { flex: 1; min-width: 0; }
 .col-mid   { width: clamp(200px,26vw,340px); flex-shrink: 0; }
 .col-right { width: clamp(150px,18vw,250px); flex-shrink: 0; }
-.city { font-size: clamp(28px,5vw,72px); line-height: 1.3; margin-bottom: clamp(6px,.8vw,12px); word-break: break-word; }
+.city-name { font-size: clamp(28px,5vw,72px); line-height: 1.3; margin-bottom: clamp(6px,.8vw,12px); word-break: break-word; }
 .coords { font-size: clamp(7px,.8vw,10px); color: #333; letter-spacing: 2px; margin-bottom: clamp(28px,4vw,52px); }
 .temp-now { font-size: clamp(44px,8vw,100px); line-height: 1; margin: clamp(10px,1.5vw,20px) 0 clamp(8px,1vw,14px); }
 .temp-unit { font-size: clamp(14px,2vw,26px); color: #555; vertical-align: super; margin-left: 4px; }
@@ -120,23 +146,25 @@ body::after {
 .range-fill { position: absolute; top: 0; height: 2px; background: #fff; opacity: 0.2; }
 
 /* ── RESPONSIVE ── */
-@media (max-width: 640px) {
-  body { padding: 24px 20px; }
+@media (max-width: 700px) {
+  body { padding: 24px 20px; padding-top: 64px; }
   .layout { flex-direction: column; gap: 40px; }
   .col-mid, .col-right { width: 100%; }
-  .city { font-size: clamp(26px,9vw,44px); }
+  .city-name { font-size: clamp(26px,9vw,44px); }
   .temp-now { font-size: clamp(52px,18vw,80px); }
-  .map-picker { flex-direction: column; }
-  .map-sidebar { width: 100%; }
+  .picker-layout { flex-direction: column; }
+  .city-search-wrap { width: 100%; position: static; }
+  .city-list-wrap { column-count: 1; }
 }
-@media (min-width:641px) and (max-width:1024px) {
+@media (min-width:701px) and (max-width:1024px) {
   .col-mid { width: clamp(160px,28vw,240px); }
   .col-right { width: clamp(130px,22vw,180px); }
-  .city { font-size: clamp(24px,4.5vw,48px); }
+  .city-name { font-size: clamp(24px,4.5vw,48px); }
+  .city-list-wrap { column-count: 2; }
 }
 @media (min-width:1600px) {
-  body { padding: 64px 96px; }
-  .city { font-size: clamp(56px,4.5vw,88px); }
+  body { padding: 64px 96px; padding-top: 96px; }
+  .city-name { font-size: clamp(56px,4.5vw,88px); }
   .temp-now { font-size: clamp(80px,7vw,120px); }
   .col-mid { width: 360px; }
   .col-right { width: 280px; }
@@ -144,15 +172,31 @@ body::after {
 </style>
 </head>
 <body>
+
+<button class="ham-btn" onclick="openPanel()" aria-label="Menu">
+  <span></span><span></span><span></span>
+</button>
+
+<div class="panel-overlay" id="panel-overlay" onclick="closePanel()"></div>
+<div class="side-panel" id="side-panel">
+  <div class="panel-top">
+    <div class="panel-title">SZUKAJ MIEJSCOWOSCI</div>
+    <button class="panel-close" onclick="closePanel()">✕</button>
+  </div>
+  <input class="city-search" id="panel-search-input" type="text" placeholder="NP. ZAKOPANE" autocomplete="off" spellcheck="false" oninput="onPanelInput(this.value)"/>
+  <div class="search-results" id="panel-results"></div>
+  <div id="panel-selected"></div>
+</div>
+
 <div id="app"><div class="loading">LADOWANIE...</div></div>
 
 <script>
 // ── PIXEL ICONS ────────────────────────────────────────────────────────────
 function pxIcon(pixels, size) {
-  const c = size / 8; let s = '';
-  for (const [x,y,v] of pixels) {
-    const fill = v===2?'#fff':v===1?'#777':'#333';
-    s += `<rect x="${x*c}" y="${y*c}" width="${c}" height="${c}" fill="${fill}"/>`;
+  const c=size/8; let s='';
+  for(const [x,y,v] of pixels){
+    const fill=v===2?'#fff':v===1?'#777':'#333';
+    s+=`<rect x="${x*c}" y="${y*c}" width="${c}" height="${c}" fill="${fill}"/>`;
   }
   return `<svg class="px-icon" width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" xmlns="http://www.w3.org/2000/svg">${s}</svg>`;
 }
@@ -169,8 +213,8 @@ const ICONS = {
   arrDn:   [[3,1,2],[4,1,2],[3,2,2],[4,2,2],[3,3,2],[4,3,2],[1,4,2],[2,4,2],[3,4,2],[4,4,2],[5,4,2],[6,4,2],[2,5,2],[3,5,2],[4,5,2],[5,5,2],[3,6,2],[4,6,2]],
   arrEq:   [[0,2,2],[1,2,2],[2,2,2],[3,2,2],[4,2,2],[5,2,2],[6,2,2],[7,2,2],[0,5,2],[1,5,2],[2,5,2],[3,5,2],[4,5,2],[5,5,2],[6,5,2],[7,5,2]],
 };
-function iconSize(b) { const w=window.innerWidth; return w<480?Math.round(b*1.4):w<768?Math.round(b*1.2):w>1600?Math.round(b*1.6):b; }
-function wmoIcon(code,b) {
+function iconSize(b){const w=window.innerWidth;return w<480?Math.round(b*1.4):w<768?Math.round(b*1.2):w>1600?Math.round(b*1.6):b;}
+function wmoIcon(code,b){
   const sz=iconSize(b);
   if(code===0)  return pxIcon(ICONS.sun,sz);
   if(code<=2)   return pxIcon(ICONS.partly,sz);
@@ -182,66 +226,110 @@ function wmoIcon(code,b) {
   if(code<=86)  return pxIcon(ICONS.snow,sz);
   return pxIcon(ICONS.thunder,sz);
 }
-function wmoDesc(code) {
-  if(code===0) return 'BEZCHMURNIE';
-  if(code<=2)  return 'CZ. ZACHMURZENIE';
-  if(code===3) return 'POCHMURNO';
-  if(code<=48) return 'MGLA';
-  if(code<=55) return 'MZAWKA';
-  if(code<=67) return 'DESZCZ';
-  if(code<=77) return 'SNIEG';
-  if(code<=82) return 'PRZELOTNY DESZCZ';
-  if(code<=86) return 'OPADY SNIEGU';
-  return 'BURZA';
+function wmoDesc(code){
+  if(code===0)return'BEZCHMURNIE';if(code<=2)return'CZ. ZACHMURZENIE';
+  if(code===3)return'POCHMURNO';if(code<=48)return'MGLA';
+  if(code<=55)return'MZAWKA';if(code<=67)return'DESZCZ';
+  if(code<=77)return'SNIEG';if(code<=82)return'PRZELOTNY DESZCZ';
+  if(code<=86)return'OPADY SNIEGU';return'BURZA';
 }
 
 // ── HELPERS ───────────────────────────────────────────────────────────────
 const $   = id => document.getElementById(id);
 const pad = n  => String(n).padStart(2,'0');
-const avg = a  => a.length ? a.reduce((x,y)=>x+y)/a.length : 0;
-const set = html => { $('app').innerHTML = html; };
+const avg = a  => a.length?a.reduce((x,y)=>x+y)/a.length:0;
+const set = html => { $('app').innerHTML=html; };
 const DAYS  = ['ND','PN','WT','SR','CZ','PT','SO'];
 const PARTS = [{name:'RANO',s:6,e:11},{name:'POLUDNIE',s:11,e:15},{name:'WIECZOR',s:17,e:21},{name:'NOC',s:21,e:24}];
 
+// ── CITIES LIST ───────────────────────────────────────────────────────────
+const CITIES = [
+  {name:'AUGUSTOW',    lat:53.8440,lon:22.9793},
+  {name:'BIALYSTOK',   lat:53.1325,lon:23.1688},
+  {name:'BIELSKO-BIALA',lat:49.8224,lon:19.0446},
+  {name:'BYDGOSZCZ',   lat:53.1235,lon:18.0084},
+  {name:'CHELM',       lat:51.1435,lon:23.4716},
+  {name:'CZESTOCHOWA', lat:50.8118,lon:19.1203},
+  {name:'ELBLAG',      lat:54.1559,lon:19.4044},
+  {name:'GDANSK',      lat:54.3520,lon:18.6466},
+  {name:'GDYNIA',      lat:54.5189,lon:18.5305},
+  {name:'GORZOW WLKP', lat:52.7325,lon:15.2369},
+  {name:'GRUDZIADZ',   lat:53.4836,lon:18.7536},
+  {name:'JELENIA GORA',lat:50.9044,lon:15.7196},
+  {name:'KALISZ',      lat:51.7578,lon:18.0858},
+  {name:'KATOWICE',    lat:50.2649,lon:19.0238},
+  {name:'KIELCE',      lat:50.8661,lon:20.6286},
+  {name:'KOSZALIN',    lat:54.1943,lon:16.1720},
+  {name:'KRAKOW',      lat:50.0647,lon:19.9450},
+  {name:'KROSNO',      lat:49.6893,lon:21.7714},
+  {name:'LEGNICA',     lat:51.2070,lon:16.1619},
+  {name:'LODZ',        lat:51.7592,lon:19.4560},
+  {name:'LOMZA',       lat:53.1783,lon:22.0591},
+  {name:'LUBLIN',      lat:51.2465,lon:22.5684},
+  {name:'NOWY SACZ',   lat:49.6246,lon:20.6935},
+  {name:'OLSZTYN',     lat:53.7784,lon:20.4801},
+  {name:'OPOLE',       lat:50.6751,lon:17.9213},
+  {name:'OSTROLEKA',   lat:53.0855,lon:21.5680},
+  {name:'PIOTRKOW TR', lat:51.4040,lon:19.7030},
+  {name:'PLOCK',       lat:52.5463,lon:19.7066},
+  {name:'POZNAN',      lat:52.4064,lon:16.9252},
+  {name:'PRZEMYSL',    lat:49.7838,lon:22.7677},
+  {name:'RADOM',       lat:51.4027,lon:21.1471},
+  {name:'RZESZOW',     lat:50.0413,lon:21.9990},
+  {name:'SIEDLCE',     lat:52.1677,lon:22.2903},
+  {name:'SKIERNIEWICE',lat:51.9591,lon:20.1585},
+  {name:'SLUPSK',      lat:54.4641,lon:17.0286},
+  {name:'SOSNOWIEC',   lat:50.2863,lon:19.1041},
+  {name:'SUWALKI',     lat:54.1116,lon:22.9302},
+  {name:'SZCZECIN',    lat:53.4285,lon:14.5528},
+  {name:'TARNOW',      lat:50.0121,lon:20.9858},
+  {name:'TORUN',       lat:53.0138,lon:18.5984},
+  {name:'WARSZAWA',    lat:52.2297,lon:21.0122},
+  {name:'WLOCLAWEK',   lat:52.6483,lon:19.0677},
+  {name:'WROCLAW',     lat:51.1079,lon:17.0385},
+  {name:'ZAMOSC',      lat:50.7230,lon:23.2520},
+  {name:'ZIELONA GORA',lat:51.9356,lon:15.5062},
+].sort((a,b)=>a.name.localeCompare(b.name));
+
 // ── API ───────────────────────────────────────────────────────────────────
-async function getCityName(lat, lon) {
-  try {
-    const r = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json&accept-language=pl`);
-    const d = await r.json();
-    return (d.address?.city||d.address?.town||d.address?.village||'TWOJA LOKALIZACJA').toUpperCase();
-  } catch { return 'TWOJA LOKALIZACJA'; }
+async function getCityName(lat,lon){
+  try{
+    const r=await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json&accept-language=pl`);
+    const d=await r.json();
+    return(d.address?.city||d.address?.town||d.address?.village||'TWOJA LOKALIZACJA').toUpperCase();
+  }catch{return'TWOJA LOKALIZACJA';}
 }
-async function fetchWeather(lat, lon) {
-  return (await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&hourly=temperature_2m,weathercode,windspeed_10m,apparent_temperature&daily=weathercode,temperature_2m_max,temperature_2m_min&timezone=auto&past_days=1&forecast_days=11`)).json();
+async function fetchWeather(lat,lon){
+  return(await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&hourly=temperature_2m,weathercode,windspeed_10m,apparent_temperature&daily=weathercode,temperature_2m_max,temperature_2m_min&timezone=auto&past_days=1&forecast_days=11`)).json();
 }
 
-// ── LOAD & RENDER WEATHER ─────────────────────────────────────────────────
-async function loadWeather(lat, lon, cityName) {
+// ── LOAD + RENDER WEATHER ─────────────────────────────────────────────────
+async function loadWeather(lat,lon,cityName){
   set(`<div class="loading">LADOWANIE POGODY...</div>`);
-  try {
-    const [data, city] = await Promise.all([fetchWeather(lat,lon), cityName ? Promise.resolve(cityName) : getCityName(lat,lon)]);
-    renderWeather(data, city, lat, lon);
-  } catch(e) { set(`<div class="loading">BLAD: ${e.message}</div>`); }
+  try{
+    const[data,city]=await Promise.all([fetchWeather(lat,lon),cityName?Promise.resolve(cityName):getCityName(lat,lon)]);
+    renderWeather(data,city,lat,lon);
+  }catch(e){set(`<div class="loading">BLAD: ${e.message}</div>`);}
 }
 
-function renderWeather(data, city, lat, lon) {
-  const h=data.hourly, d=data.daily, now=new Date();
+function renderWeather(data,city,lat,lon){
+  const h=data.hourly,d=data.daily,now=new Date();
   const todayStr=now.toISOString().slice(0,10);
-  const tIdx=d.time.findIndex(t=>t===todayStr), yIdx=tIdx-1;
-  const hOff=h.time.findIndex(t=>t.startsWith(todayStr)), curI=hOff+now.getHours();
-  const curTemp=Math.round(h.temperature_2m[curI]), curFeels=Math.round(h.apparent_temperature[curI]);
-  const curCode=h.weathercode[curI], curWind=Math.round(h.windspeed_10m[curI]);
-  const todayMax=d.temperature_2m_max[tIdx], todayMin=d.temperature_2m_min[tIdx];
-  const yestMax=yIdx>=0?d.temperature_2m_max[yIdx]:todayMax, diff=todayMax-yestMax;
+  const tIdx=d.time.findIndex(t=>t===todayStr),yIdx=tIdx-1;
+  const hOff=h.time.findIndex(t=>t.startsWith(todayStr)),curI=hOff+now.getHours();
+  const curTemp=Math.round(h.temperature_2m[curI]),curFeels=Math.round(h.apparent_temperature[curI]);
+  const curCode=h.weathercode[curI],curWind=Math.round(h.windspeed_10m[curI]);
+  const todayMax=d.temperature_2m_max[tIdx],todayMin=d.temperature_2m_min[tIdx];
+  const yestMax=yIdx>=0?d.temperature_2m_max[yIdx]:todayMax,diff=todayMax-yestMax;
   const arrKey=diff>2?'arrUp':diff<-2?'arrDn':'arrEq';
   const cmpTxt=diff>2?`CIEPLEJ NIZ WCZORAJ (+${Math.round(diff)}C)`:diff<-2?`CHLODNIEJ NIZ WCZORAJ (${Math.round(diff)}C)`:'PODOBNIE JAK WCZORAJ';
 
-  const partsHTML = PARTS.map(p=>{
+  const partsHTML=PARTS.map(p=>{
     const temps=h.temperature_2m.slice(hOff+p.s,hOff+p.e);
     const winds=h.windspeed_10m.slice(hOff+p.s,hOff+p.e);
     const codes=h.weathercode.slice(hOff+p.s,hOff+p.e);
     const code=codes[Math.floor(codes.length/2)]||0;
-    return `<div class="period-row"><span class="pname">${p.name}</span>${wmoIcon(code,20)}<div class="ptemp-wind"><span class="ptemp">${Math.round(avg(temps))}°C</span><span class="pwind">${Math.round(avg(winds))} KM/H</span></div></div>`;
+    return`<div class="period-row"><span class="pname">${p.name}</span>${wmoIcon(code,20)}<div class="ptemp-wind"><span class="ptemp">${Math.round(avg(temps))}°C</span><span class="pwind">${Math.round(avg(winds))} KM/H</span></div></div>`;
   }).join('');
 
   const forecast=[];
@@ -253,7 +341,7 @@ function renderWeather(data, city, lat, lon) {
   const minT=Math.min(...allLo),maxT=Math.max(...allHi),rng=maxT-minT||1;
   const forecastHTML=forecast.map(f=>{
     const bL=((f.lo-minT)/rng*100).toFixed(1),bW=((f.hi-f.lo)/rng*100).toFixed(1);
-    return `<div class="forecast-row"><span class="fday${f.today?' today':''}">${f.name}</span>${wmoIcon(f.code,16)}<span class="flow">${f.lo}°</span><div class="range-wrap"><div class="range-fill" style="left:${bL}%;width:${bW}%"></div></div><span class="fhigh">${f.hi}°</span></div>`;
+    return`<div class="forecast-row"><span class="fday${f.today?' today':''}">${f.name}</span>${wmoIcon(f.code,16)}<span class="flow">${f.lo}°</span><div class="range-wrap"><div class="range-fill" style="left:${bL}%;width:${bW}%"></div></div><span class="fhigh">${f.hi}°</span></div>`;
   }).join('');
 
   set(`
@@ -261,7 +349,7 @@ function renderWeather(data, city, lat, lon) {
     <div class="layout">
       <div class="col-left">
         <div class="label">WITAJ W</div>
-        <div class="city">${city}</div>
+        <div class="city-name">${city}</div>
         <div class="coords">${lat.toFixed(4)} N  ${lon.toFixed(4)} E</div>
         ${wmoIcon(curCode,48)}
         <div class="temp-now">${curTemp}<span class="temp-unit">°C</span></div>
@@ -277,15 +365,15 @@ function renderWeather(data, city, lat, lon) {
       <div class="col-right"><div class="label">PROGNOZA 10 DNI</div>${forecastHTML}</div>
     </div>`);
 
-  setInterval(()=>{ const n=new Date(),el=$('clk'); if(el) el.textContent=`${pad(n.getHours())}:${pad(n.getMinutes())}:${pad(n.getSeconds())}`; },1000);
+  setInterval(()=>{const n=new Date(),el=$('clk');if(el)el.textContent=`${pad(n.getHours())}:${pad(n.getMinutes())}:${pad(n.getSeconds())}`;},1000);
 }
 
-// ── DENIED SCREEN ─────────────────────────────────────────────────────────
-function showDenied(errCode) {
+// ── DENIED / CITY PICKER ──────────────────────────────────────────────────
+function showDenied(errCode){
   const msgs={1:'ZABLOKOWANO DOSTEP DO LOKALIZACJI.',2:'NIE MOZNA USTALIC POZYCJI.',3:'PRZEKROCZONO CZAS OCZEKIWANIA.'};
-  const hint = errCode===1
-    ? `ABY ODBLOKOWAC: KLIKNIJ IKONKE <strong>KLODKI</strong> LUB <strong>"I"</strong><br>W PASKU ADRESU → LOKALIZACJA → ZEZWOL → ODSWIEZ STRONE.`
-    : `SPRAWDZ CZY PRZEGLĄDARKA MA DOSTEP DO LOKALIZACJI<br>I SPROBUJ PONOWNIE.`;
+  const hint=errCode===1
+    ?`ABY ODBLOKOWAC: KLIKNIJ IKONKE <strong>KLODKI</strong> LUB <strong>"I"</strong><br>W PASKU ADRESU → LOKALIZACJA → ZEZWOL → ODSWIEZ STRONE.`
+    :`SPRAWDZ CZY PRZEGLĄDARKA MA DOSTEP DO LOKALIZACJI<br>I SPROBUJ PONOWNIE.`;
   set(`
     <div class="denied-screen">
       <div class="denied-tag">JAKDZISIAJ.PL</div>
@@ -293,138 +381,139 @@ function showDenied(errCode) {
       <div class="denied-desc">${msgs[errCode]||'LOKALIZACJA NIEDOSTEPNA.'}<br><br>${hint}</div>
       <div class="denied-btns">
         <button class="px-btn" onclick="tryGPS()">▸ SPROBUJ PONOWNIE</button>
-        <button class="px-btn ghost" onclick="showMapPicker()">▸ ZNAJDZ RECZNIE</button>
+        <button class="px-btn ghost" onclick="showCityPicker()">▸ ZNAJDZ RECZNIE</button>
       </div>
     </div>`);
 }
 
-// ── MAP PICKER ────────────────────────────────────────────────────────────
-const PL_CITIES = [
-  {name:'WARSZAWA',    lat:52.2297,lon:21.0122,mx:268,my:142},
-  {name:'KRAKOW',      lat:50.0647,lon:19.9450,mx:228,my:232},
-  {name:'WROCLAW',     lat:51.1079,lon:17.0385,mx:148,my:185},
-  {name:'POZNAN',      lat:52.4064,lon:16.9252,mx:138,my:130},
-  {name:'GDANSK',      lat:54.3520,lon:18.6466,mx:210,my:52 },
-  {name:'SZCZECIN',    lat:53.4285,lon:14.5528,mx:72, my:92 },
-  {name:'BYDGOSZCZ',   lat:53.1235,lon:18.0084,mx:188,my:108},
-  {name:'LUBLIN',      lat:51.2465,lon:22.5684,mx:318,my:190},
-  {name:'KATOWICE',    lat:50.2649,lon:19.0238,mx:208,my:218},
-  {name:'BIALYSTOK',   lat:53.1325,lon:23.1688,mx:336,my:108},
-  {name:'GDYNIA',      lat:54.5189,lon:18.5305,mx:204,my:44 },
-  {name:'CZESTOCHOWA', lat:50.8118,lon:19.1203,mx:218,my:200},
-  {name:'TORUN',       lat:53.0138,lon:18.5984,mx:196,my:112},
-  {name:'RZESZOW',     lat:50.0413,lon:21.9990,mx:288,my:238},
-  {name:'KIELCE',      lat:50.8661,lon:20.6286,mx:262,my:198},
-  {name:'OLSZTYN',     lat:53.7784,lon:20.4801,mx:270,my:80 },
-  {name:'LODZ',        lat:51.7592,lon:19.4560,mx:228,my:162},
-  {name:'OPOLE',       lat:50.6751,lon:17.9213,mx:178,my:208},
-  {name:'RADOM',       lat:51.4027,lon:21.1471,mx:278,my:172},
-  {name:'ZIELONA GORA',lat:51.9356,lon:15.5062,mx:96, my:158},
-];
-const PL_PATH='M72 92L80 80L96 68L118 58L138 52L162 44L188 40L204 38L210 44L220 42L240 48L258 52L272 58L290 62L310 60L328 64L340 74L348 88L350 102L346 116L338 126L336 140L340 154L344 168L342 182L336 192L330 200L322 210L316 224L308 238L298 248L286 254L272 258L256 260L240 258L224 252L210 246L196 248L182 250L168 248L154 242L144 232L136 220L130 208L120 200L108 196L96 188L86 178L78 166L70 154L66 140L64 126L66 112L72 100Z';
+function showCityPicker(){
+  // group cities by first letter
+  const groups={};
+  CITIES.forEach(c=>{
+    const l=c.name[0];
+    if(!groups[l]) groups[l]=[];
+    groups[l].push(c);
+  });
+  const listHTML=Object.keys(groups).sort().map(l=>`
+    <div class="alpha-group">
+      <div class="alpha-letter">${l}</div>
+      ${groups[l].map(c=>`<span class="city-item" onclick="pickCity('${c.name}',${c.lat},${c.lon})">${c.name}</span>`).join('')}
+    </div>`).join('');
 
-let selectedCity=null, searchTimeout=null, searchResults=[];
-
-function showMapPicker() {
-  const dots=PL_CITIES.map((c,i)=>`<g class="map-city" id="mc${i}" onclick="selectMapCity(${i})"><circle cx="${c.mx}" cy="${c.my}" r="5"/><text x="${c.mx+8}" y="${c.my+2}">${c.name}</text></g>`).join('');
-  const grid=Array.from({length:30},(_,r)=>`<line x1="0" y1="${r*10}" x2="400" y2="${r*10}" stroke="#111" stroke-width="1"/>`).join('')
-            +Array.from({length:40},(_,c)=>`<line x1="${c*10}" y1="0" x2="${c*10}" y2="300" stroke="#111" stroke-width="1"/>`).join('');
   set(`
-    <div class="map-screen">
-      <div class="map-screen-top">
-        <div class="map-screen-title">WYBIERZ MIASTO<br>LUB WYSZUKAJ MIEJSCOWOSC</div>
+    <div class="picker-screen">
+      <div class="picker-top">
+        <div class="picker-title">WYBIERZ MIEJSCOWOSC</div>
         <button class="px-btn ghost" onclick="tryGPS()">▸ SPROBUJ GPS PONOWNIE</button>
       </div>
-      <div class="map-picker">
-        <div class="map-wrap">
-          <svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg" style="image-rendering:pixelated">
-            <rect width="400" height="300" fill="#000"/>
-            <path d="${PL_PATH}" fill="#0a0a0a" stroke="#222" stroke-width="2"/>
-            <clipPath id="plclip"><path d="${PL_PATH}"/></clipPath>
-            <g clip-path="url(#plclip)" opacity="0.5">${grid}</g>
-            ${dots}
-          </svg>
-        </div>
-        <div class="map-sidebar">
-          <div>
-            <div class="sidebar-label">SZUKAJ MIEJSCOWOSCI</div>
-            <input class="city-search" id="city-search-input" type="text" placeholder="NP. ZAKOPANE" autocomplete="off" spellcheck="false" oninput="onSearchInput(this.value)"/>
-          </div>
-          <div class="search-results" id="search-results"></div>
-          <div id="selected-info"></div>
+      <div class="picker-layout">
+        <div class="city-list-wrap">${listHTML}</div>
+        <div class="city-search-wrap">
+          <div class="search-label">SZUKAJ MIEJSCOWOSCI</div>
+          <input class="city-search" id="picker-search" type="text" placeholder="NP. ZAKOPANE" autocomplete="off" spellcheck="false" oninput="onPickerSearch(this.value)"/>
+          <div class="search-results" id="picker-results"></div>
+          <div id="picker-selected"></div>
         </div>
       </div>
     </div>`);
 }
 
-function selectMapCity(idx) {
-  const c=PL_CITIES[idx];
-  document.querySelectorAll('.map-city').forEach(el=>el.classList.remove('active'));
-  document.getElementById('mc'+idx)?.classList.add('active');
-  selectedCity={name:c.name,lat:c.lat,lon:c.lon};
-  showSelectedBox(c.name,c.lat,c.lon);
+function pickCity(name,lat,lon){
+  document.querySelectorAll('.city-item').forEach(el=>el.classList.remove('active'));
+  event?.target?.classList.add('active');
+  loadWeather(lat,lon,name);
 }
 
-function showSelectedBox(name,lat,lon) {
-  const el=document.getElementById('selected-info');
-  if(!el) return;
-  el.innerHTML=`<div class="selected-box"><div class="selected-name">${name}</div><div class="selected-coord">${lat.toFixed(4)} N  ${lon.toFixed(4)} E</div><button class="px-btn" onclick="loadWeather(${lat},${lon},'${name}')">▸ POKAZ POGODE</button></div>`;
-}
-
-function onSearchInput(val) {
-  clearTimeout(searchTimeout);
-  const el=document.getElementById('search-results');
-  if(!el) return;
+// picker search
+let pickerTimeout=null,pickerResults=[];
+function onPickerSearch(val){
+  clearTimeout(pickerTimeout);
+  const el=$('picker-results');
+  if(!el)return;
   if(!val||val.length<2){el.innerHTML='';return;}
   el.innerHTML=`<div class="search-hint">SZUKAM...</div>`;
-  searchTimeout=setTimeout(()=>searchCity(val),420);
+  pickerTimeout=setTimeout(()=>doPickerSearch(val),420);
 }
-
-async function searchCity(query) {
-  const el=document.getElementById('search-results');
-  if(!el) return;
-  try {
-    const data=await (await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&countrycodes=pl&format=json&limit=7&accept-language=pl`)).json();
-    searchResults=data;
+async function doPickerSearch(query){
+  const el=$('picker-results');if(!el)return;
+  try{
+    const data=await(await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&countrycodes=pl&format=json&limit=8&accept-language=pl`)).json();
+    pickerResults=data;
     if(!data.length){el.innerHTML=`<div class="sr-item" style="cursor:default;color:#222">BRAK WYNIKOW</div>`;return;}
     el.innerHTML=data.map((r,i)=>{
       const name=r.display_name.split(',').slice(0,2).join(', ').toUpperCase();
       const lat=parseFloat(r.lat).toFixed(4),lon=parseFloat(r.lon).toFixed(4);
-      return `<div class="sr-item" onclick="selectSearchResult(${i})">${name}<span class="sr-coords">${lat} N  ${lon} E</span></div>`;
+      return`<div class="sr-item" onclick="selectPickerResult(${i})">${name}<span class="sr-coords">${lat} N  ${lon} E</span></div>`;
     }).join('');
-  } catch { el.innerHTML=`<div class="sr-item" style="cursor:default;color:#222">BLAD WYSZUKIWANIA</div>`; }
+  }catch{el.innerHTML=`<div class="sr-item" style="cursor:default;color:#222">BLAD WYSZUKIWANIA</div>`;}
 }
-
-function selectSearchResult(idx) {
-  const r=searchResults[idx]; if(!r) return;
+function selectPickerResult(idx){
+  const r=pickerResults[idx];if(!r)return;
   const lat=parseFloat(r.lat),lon=parseFloat(r.lon);
   const name=r.display_name.split(',')[0].toUpperCase();
-  document.querySelectorAll('.map-city').forEach(el=>el.classList.remove('active'));
-  document.querySelectorAll('.sr-item').forEach((el,i)=>el.classList.toggle('active',i===idx));
-  selectedCity={name,lat,lon};
-  showSelectedBox(name,lat,lon);
+  document.querySelectorAll('#picker-results .sr-item').forEach((el,i)=>el.classList.toggle('active',i===idx));
+  const sel=$('picker-selected');
+  if(sel)sel.innerHTML=`<div class="selected-box"><div class="selected-name">${name}</div><div class="selected-coord">${lat.toFixed(4)} N  ${lon.toFixed(4)} E</div><button class="px-btn" onclick="loadWeather(${lat},${lon},'${name}')">▸ POKAZ POGODE</button></div>`;
 }
 
-// ── GPS FLOW ──────────────────────────────────────────────────────────────
-async function tryGPS() {
+// ── SIDE PANEL SEARCH ─────────────────────────────────────────────────────
+let panelTimeout=null,panelResults=[];
+
+function openPanel(){
+  $('side-panel').classList.add('open');
+  $('panel-overlay').classList.add('open');
+  setTimeout(()=>{const el=$('panel-search-input');if(el)el.focus();},200);
+}
+function closePanel(){
+  $('side-panel').classList.remove('open');
+  $('panel-overlay').classList.remove('open');
+}
+function onPanelInput(val){
+  clearTimeout(panelTimeout);
+  const el=$('panel-results');if(!el)return;
+  if(!val||val.length<2){el.innerHTML='';return;}
+  el.innerHTML=`<div class="search-hint">SZUKAM...</div>`;
+  panelTimeout=setTimeout(()=>doPanelSearch(val),420);
+}
+async function doPanelSearch(query){
+  const el=$('panel-results');if(!el)return;
+  try{
+    const data=await(await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&countrycodes=pl&format=json&limit=8&accept-language=pl`)).json();
+    panelResults=data;
+    if(!data.length){el.innerHTML=`<div class="sr-item" style="cursor:default;color:#222">BRAK WYNIKOW</div>`;return;}
+    el.innerHTML=data.map((r,i)=>{
+      const name=r.display_name.split(',').slice(0,2).join(', ').toUpperCase();
+      const lat=parseFloat(r.lat).toFixed(4),lon=parseFloat(r.lon).toFixed(4);
+      return`<div class="sr-item" onclick="selectPanelResult(${i})">${name}<span class="sr-coords">${lat} N  ${lon} E</span></div>`;
+    }).join('');
+  }catch{el.innerHTML=`<div class="sr-item" style="cursor:default;color:#222">BLAD WYSZUKIWANIA</div>`;}
+}
+function selectPanelResult(idx){
+  const r=panelResults[idx];if(!r)return;
+  const lat=parseFloat(r.lat),lon=parseFloat(r.lon);
+  const name=r.display_name.split(',')[0].toUpperCase();
+  document.querySelectorAll('#panel-results .sr-item').forEach((el,i)=>el.classList.toggle('active',i===idx));
+  const sel=$('panel-selected');
+  if(sel)sel.innerHTML=`<div class="selected-box"><div class="selected-name">${name}</div><div class="selected-coord">${lat.toFixed(4)} N  ${lon.toFixed(4)} E</div><button class="px-btn" onclick="closePanel();loadWeather(${lat},${lon},'${name}')">▸ POKAZ POGODE</button></div>`;
+}
+
+// ── GPS ───────────────────────────────────────────────────────────────────
+async function tryGPS(){
   set(`<div class="loading">POBIERANIE LOKALIZACJI...</div>`);
   if(!navigator.geolocation){showDenied(0);return;}
-  const pos=await new Promise((res,rej)=>
-    navigator.geolocation.getCurrentPosition(res,rej,{timeout:10000,enableHighAccuracy:false,maximumAge:300000})
-  ).catch(e=>({error:e}));
+  const pos=await new Promise((res,rej)=>navigator.geolocation.getCurrentPosition(res,rej,{timeout:10000,enableHighAccuracy:false,maximumAge:300000})).catch(e=>({error:e}));
   if(pos?.error){showDenied(pos.error.code);return;}
   loadWeather(pos.coords.latitude,pos.coords.longitude,null);
 }
 
-// ── INIT ──────────────────────────────────────────────────────────────────
-async function init() {
+async function init(){
   if(!navigator.geolocation){showDenied(0);return;}
-  if(navigator.permissions) {
-    try {
+  if(navigator.permissions){
+    try{
       const perm=await navigator.permissions.query({name:'geolocation'});
       if(perm.state==='denied'){showDenied(1);return;}
       if(perm.state==='granted'){tryGPS();return;}
-    } catch(_){}
+    }catch(_){}
   }
   tryGPS();
 }
