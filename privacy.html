@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="index,follow">
+<title>Polityka prywatności — JAKDZISIAJ.PL</title>
+<style>
+:root {
+  --bg:#f7f7f5; --surface:#fff; --text:#111; --muted:#6f6f6b;
+  --line:#e7e7e4; --soft:#f1f1ef; --radius:24px;
+}
+*{box-sizing:border-box}
+html{color-scheme:light}
+body{
+  margin:0; background:var(--bg); color:var(--text);
+  font-family:Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{width:min(900px,calc(100% - 32px));margin:0 auto;padding:34px 0 64px}
+.top{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:34px}
+.brand{font-weight:700;letter-spacing:-.03em}
+.back{color:var(--muted);text-decoration:none;font-size:14px}
+.back:hover{color:var(--text)}
+.card{
+  background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);
+  padding:clamp(26px,5vw,58px);box-shadow:0 16px 45px rgba(0,0,0,.05)
+}
+.kicker{font-size:12px;font-weight:600;color:var(--muted);letter-spacing:.08em;text-transform:uppercase}
+h1{font-size:clamp(42px,7vw,76px);line-height:.98;letter-spacing:-.06em;margin:14px 0 16px}
+.lead{font-size:16px;line-height:1.75;color:var(--muted);margin:0 0 36px}
+h2{font-size:22px;letter-spacing:-.03em;margin:34px 0 12px}
+p,li{font-size:15px;line-height:1.75;color:#444}
+ul{padding-left:22px}
+a{color:#111;text-underline-offset:3px}
+.notice{
+  border:1px solid #d9d9d5;background:var(--soft);border-radius:18px;padding:18px 20px;
+  margin:22px 0
+}
+.notice strong{display:block;margin-bottom:6px}
+.small{font-size:12px;color:#888;margin-top:34px}
+footer{margin-top:24px;color:#888;font-size:12px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <div class="brand">JAKDZISIAJ.PL</div>
+    <a class="back" href="index.html">← Wróć do pogody</a>
+  </div>
+
+  <main class="card">
+    <div class="kicker">Prywatność</div>
+    <h1>Polityka prywatności</h1>
+    <p class="lead">
+      Poniżej wyjaśniamy, jakie informacje mogą być przetwarzane podczas korzystania
+      z JAKDZISIAJ.PL, w szczególności przy użyciu lokalizacji urządzenia.
+    </p>
+
+    <h2>1. Administrator danych</h2>
+    <p>
+      Administratorem danych związanych z działaniem serwisu JAKDZISIAJ.PL jest:
+      <strong>Kasper Tokarz</strong>.
+    </p>
+    <p>
+      Kontakt w sprawach dotyczących prywatności:
+      <strong>kontakt@jakdzisiaj.pl</strong>.
+    </p>
+
+    <h2>2. Jak działa lokalizacja</h2>
+    <p>
+      Serwis nie pobiera lokalizacji urządzenia automatycznie po wejściu na stronę.
+      Funkcja lokalizacji jest uruchamiana dopiero po wybraniu przez użytkownika
+      opcji „Użyj mojej lokalizacji” i po udzieleniu zgody w przeglądarce.
+    </p>
+    <p>
+      Po udzieleniu dostępu przeglądarka przekazuje serwisowi współrzędne geograficzne
+      urządzenia. Są one wykorzystywane wyłącznie do ustalenia miejsca oraz pobrania
+      prognozy pogody dla wskazanej lokalizacji.
+    </p>
+
+    <h2>3. Jakie dane mogą być przetwarzane</h2>
+    <ul>
+      <li>współrzędne geograficzne, jeżeli użytkownik dobrowolnie uruchomi lokalizację,</li>
+      <li>nazwa wpisanej lub wybranej miejscowości,</li>
+      <li>adres IP oraz podstawowe dane techniczne połączenia zapisywane w logach serwera lub usług zewnętrznych,</li>
+      <li>informacje techniczne takie jak typ przeglądarki, urządzenia, system operacyjny, data i czas żądania — o ile są zapisywane w logach technicznych.</li>
+    </ul>
+
+    <h2>4. Cel i podstawa przetwarzania</h2>
+    <p>
+      Dane lokalizacyjne są używane w celu wykonania funkcji wyraźnie uruchomionej
+      przez użytkownika — wyświetlenia prognozy pogody dla jego lokalizacji.
+      Dostęp do lokalizacji urządzenia wymaga odrębnej zgody udzielanej w interfejsie
+      przeglądarki i może zostać przez użytkownika cofnięty w ustawieniach przeglądarki.
+    </p>
+    <p>
+      Dane techniczne i logi serwera mogą być przetwarzane w celu zapewnienia
+      bezpieczeństwa, diagnostyki błędów, ochrony przed nadużyciami i prawidłowego
+      działania serwisu, w zakresie niezbędnym do realizacji tych celów.
+    </p>
+
+    <h2>5. Open-Meteo</h2>
+    <p>
+      Do pobierania prognozy pogody serwis korzysta z API Open-Meteo.
+      Do Open-Meteo przekazywane są współrzędne lokalizacji, dla której ma zostać
+      pobrana prognoza, a połączenie z API ujawnia również dostawcy typowe informacje
+      techniczne, takie jak adres IP urządzenia wykonującego żądanie.
+    </p>
+    <p>
+      Zgodnie z informacjami publikowanymi przez Open-Meteo, logi bezpłatnego API
+      mogą zawierać adresy IP oraz współrzędne i są usuwane po 90 dniach.
+      Więcej informacji:
+      <a href="https://open-meteo.com/en/terms" rel="noopener noreferrer">Open-Meteo — Terms & Privacy</a>.
+    </p>
+
+    <h2>6. OpenStreetMap / Nominatim</h2>
+    <p>
+      Serwis korzysta z publicznej usługi Nominatim prowadzonej przez OpenStreetMap Foundation
+      do wyszukiwania miejscowości oraz zamiany współrzędnych na nazwę miejsca.
+      W związku z tym zapytania wysyłane do Nominatim mogą zawierać wyszukiwaną nazwę
+      albo współrzędne oraz typowe dane techniczne połączenia, w tym adres IP.
+    </p>
+    <p>
+      Więcej informacji:
+      <a href="https://operations.osmfoundation.org/policies/nominatim/" rel="noopener noreferrer">zasady korzystania z Nominatim</a>
+      oraz
+      <a href="https://osmfoundation.org/wiki/Privacy_Policy" rel="noopener noreferrer">polityka prywatności OpenStreetMap Foundation</a>.
+    </p>
+
+    <h2>7. Hosting i logi serwera</h2>
+    <p>
+      Dostawca hostingu może automatycznie tworzyć logi techniczne związane z obsługą
+      żądań do serwisu. Takie logi mogą obejmować m.in. adres IP, czas żądania,
+      żądany adres URL, kod odpowiedzi serwera oraz dane dotyczące przeglądarki.
+      Szczegółowy okres przechowywania logów zależy od konfiguracji i zasad dostawcy hostingu.
+    </p>
+
+    <h2>8. Cookies i technologie śledzące</h2>
+    <p>
+      W obecnej wersji JAKDZISIAJ.PL nie wykorzystuje narzędzi reklamowych,
+      Google Analytics, Meta Pixel ani innych mechanizmów profilowania użytkowników.
+      Serwis nie ustawia własnych cookies marketingowych ani analitycznych.
+    </p>
+    <p>
+      Jeżeli w przyszłości takie rozwiązania zostaną dodane, polityka prywatności
+      zostanie odpowiednio zaktualizowana, a tam, gdzie będzie to wymagane,
+      użytkownik otrzyma możliwość wyrażenia lub odmowy zgody przed uruchomieniem
+      niekoniecznych technologii.
+    </p>
+
+    <h2>9. Czy serwis zapisuje historię lokalizacji?</h2>
+    <p>
+      JAKDZISIAJ.PL nie zapisuje historii lokalizacji użytkownika we własnej bazie danych.
+      Współrzędne są wykorzystywane w bieżącej sesji do wykonania zapytań potrzebnych
+      do ustalenia nazwy miejsca i pobrania prognozy. Niezależnie od tego dostawcy
+      usług technicznych mogą prowadzić własne logi zgodnie ze swoimi politykami.
+    </p>
+
+    <h2>10. Odbiorcy danych</h2>
+    <p>Dane mogą być przekazywane wyłącznie w zakresie niezbędnym do działania serwisu:</p>
+    <ul>
+      <li>dostawcy hostingu,</li>
+      <li>OpenMeteo GmbH — w związku z pobieraniem danych pogodowych,</li>
+      <li>OpenStreetMap Foundation — w związku z korzystaniem z Nominatim.</li>
+    </ul>
+
+    <h2>11. Przekazywanie danych poza EOG</h2>
+    <p>
+      Niektóre usługi wykorzystywane przez serwis mogą być świadczone przez podmioty
+      mające siedzibę poza Europejskim Obszarem Gospodarczym. W szczególności
+      OpenMeteo GmbH ma siedzibę w Szwajcarii. Zasady przetwarzania danych przez
+      zewnętrznych dostawców określają ich własne polityki prywatności.
+    </p>
+
+    <h2>12. Prawa użytkownika</h2>
+    <p>
+      W zakresie, w jakim administrator przetwarza dane osobowe, użytkownik może —
+      zależnie od podstawy i okoliczności przetwarzania — korzystać z praw wynikających
+      z RODO, w szczególności prawa dostępu do danych, ich sprostowania, usunięcia,
+      ograniczenia przetwarzania, wniesienia sprzeciwu oraz wniesienia skargi do
+      Prezesa Urzędu Ochrony Danych Osobowych.
+    </p>
+    <p>
+      Zgodę na dostęp strony do lokalizacji urządzenia można zmienić lub cofnąć
+      bezpośrednio w ustawieniach przeglądarki.
+    </p>
+
+    <h2>13. Dobrowolność podania danych</h2>
+    <p>
+      Udostępnienie lokalizacji jest dobrowolne. Brak zgody nie uniemożliwia
+      korzystania z serwisu — użytkownik może wybrać lub wyszukać miejscowość ręcznie.
+    </p>
+
+    <h2>14. Zmiany polityki</h2>
+    <p>
+      Polityka może zostać zaktualizowana, jeżeli zmieni się sposób działania strony,
+      zakres wykorzystywanych usług albo wymagania prawne. Aktualna wersja będzie
+      publikowana pod tym samym adresem.
+    </p>
+
+    <p class="small">Ostatnia aktualizacja: 7 października 2026 r.</p>
+  </main>
+
+  <footer>© 2026 JAKDZISIAJ.PL</footer>
+</div>
+</body>
+</html>
