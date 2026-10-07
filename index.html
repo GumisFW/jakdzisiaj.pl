@@ -4,170 +4,159 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>JAKDZISIAJ.PL</title>
-<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
+:root {
+  --bg: #f7f7f5;
+  --surface: #ffffff;
+  --text: #111111;
+  --muted: #757575;
+  --line: #e7e7e4;
+  --soft: #f1f1ef;
+  --shadow: 0 16px 45px rgba(0,0,0,.06);
+  --radius: 24px;
+}
+
 * { margin: 0; padding: 0; box-sizing: border-box; }
+html { color-scheme: light; }
 body {
-  background: #000; color: #fff;
-  font-family: 'Press Start 2P', monospace;
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   min-height: 100vh;
-  padding: clamp(20px,4vw,56px) clamp(20px,5vw,72px);
-  padding-top: clamp(64px,7vw,92px);
+  padding: 96px clamp(20px,5vw,72px) 56px;
+  -webkit-font-smoothing: antialiased;
 }
-body::after {
-  content: '';
-  position: fixed; inset: 0;
-  background: repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,0,0,0.08) 3px, rgba(0,0,0,0.08) 4px);
-  pointer-events: none; z-index: 998;
-}
+button, input { font: inherit; }
 
-/* ── HAMBURGER ── */
+/* MENU */
 .ham-btn {
-  position: fixed;
-  top: clamp(14px,2vw,24px); left: clamp(16px,3vw,32px);
-  z-index: 1100;
-  background: #000; border: none; cursor: pointer;
-  padding: 8px; display: flex; flex-direction: column; gap: 5px;
+  position: fixed; top: 24px; left: 24px; z-index: 1100;
+  width: 46px; height: 46px; border-radius: 50%;
+  background: rgba(255,255,255,.88); border: 1px solid var(--line);
+  box-shadow: 0 6px 24px rgba(0,0,0,.05); backdrop-filter: blur(14px);
+  cursor: pointer; display: grid; place-content: center; gap: 5px;
 }
-.ham-btn span { display: block; width: clamp(20px,2vw,28px); height: 2px; background: #fff; }
-.ham-btn:hover span { background: #888; }
+.ham-btn span { width: 18px; height: 1.5px; background: var(--text); display:block; transition:.2s ease; }
+.ham-btn:hover { transform: translateY(-1px); }
 
-/* ── SIDE PANEL ── */
-.panel-overlay {
-  position: fixed; inset: 0;
-  z-index: 1040; display: none;
-  background: rgba(0,0,0,0.6);
-}
-.panel-overlay.open { display: block; }
-
+.panel-overlay { position: fixed; inset: 0; z-index: 1040; display:none; background: rgba(0,0,0,.28); backdrop-filter: blur(3px); }
+.panel-overlay.open { display:block; }
 .side-panel {
-  position: fixed; top: 0; left: 0;
-  width: clamp(280px,34vw,420px); height: 100vh;
-  background: #000; border-right: 1px solid #1a1a1a;
-  z-index: 1050;
-  transform: translateX(-100%);
-  transition: transform 0.18s steps(6);
-  overflow-y: auto;
-  padding: clamp(64px,7vw,88px) clamp(20px,2.5vw,32px) clamp(24px,3vw,40px);
-  display: flex; flex-direction: column; gap: 16px;
+  position: fixed; top:0; left:0; width:min(430px,92vw); height:100vh; z-index:1050;
+  background: var(--surface); border-right:1px solid var(--line);
+  transform: translateX(-100%); transition: transform .28s cubic-bezier(.2,.8,.2,1);
+  overflow-y:auto; padding: 88px 28px 32px; display:flex; flex-direction:column; gap:18px;
+  box-shadow: 16px 0 48px rgba(0,0,0,.08);
 }
-.side-panel.open { transform: translateX(0); }
-
-.panel-top {
-  display: flex; justify-content: space-between; align-items: center;
-  margin-bottom: 4px;
+.side-panel.open { transform:translateX(0); }
+.panel-top { display:flex; justify-content:space-between; align-items:center; }
+.panel-title, .label, .search-label, .meta-lbl {
+  font-size: 12px; font-weight:600; color:var(--muted); letter-spacing:.08em; text-transform:uppercase;
 }
-.panel-title { font-size: clamp(7px,.9vw,10px); color: #333; letter-spacing: 3px; }
-.panel-close { font-family: 'Press Start 2P', monospace; font-size: clamp(8px,1vw,12px); color: #333; background: none; border: none; cursor: pointer; padding: 4px; }
-.panel-close:hover { color: #fff; }
+.panel-close { background:none; border:0; color:var(--muted); cursor:pointer; font-size:18px; padding:8px; border-radius:50%; }
+.panel-close:hover { color:var(--text); background:var(--soft); }
 
-/* ── SHARED ── */
-.label { font-size: clamp(7px,.9vw,11px); color: #444; letter-spacing: 3px; margin-bottom: clamp(12px,1.5vw,20px); }
-.px-icon { display: inline-block; image-rendering: pixelated; vertical-align: middle; flex-shrink: 0; }
+/* SHARED */
+.label { margin-bottom: 18px; }
+.weather-icon { display:inline-flex; align-items:center; justify-content:center; color:var(--text); flex-shrink:0; }
+.weather-icon svg { display:block; width:100%; height:100%; stroke:currentColor; fill:none; stroke-width:1.7; stroke-linecap:round; stroke-linejoin:round; }
+.loading { color:var(--muted); font-size:14px; padding-top:48px; animation:pulse 1.2s ease-in-out infinite; }
+@keyframes pulse { 50% { opacity:.38; } }
 
-/* ── LOADING ── */
-.loading { font-size: clamp(8px,1.2vw,14px); color: #333; letter-spacing: 3px; animation: blink 1s step-end infinite; padding-top: clamp(40px,8vh,80px); }
-@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.1} }
+/* BUTTONS */
+.px-btn {
+  border:1px solid var(--text); background:var(--text); color:#fff; cursor:pointer;
+  padding:12px 18px; border-radius:999px; font-weight:600; font-size:13px; transition:.18s ease;
+}
+.px-btn:hover { transform:translateY(-1px); box-shadow:0 8px 20px rgba(0,0,0,.12); }
+.px-btn:active { transform:translateY(0); }
+.px-btn.ghost { background:transparent; color:var(--text); border-color:var(--line); }
+.px-btn.ghost:hover { background:var(--soft); box-shadow:none; }
 
-/* ── BUTTONS ── */
-.px-btn { font-family: 'Press Start 2P', monospace; font-size: clamp(7px,.9vw,11px); color: #000; background: #fff; border: none; cursor: pointer; padding: clamp(10px,1.4vw,16px) clamp(14px,2.2vw,28px); letter-spacing: 2px; }
-.px-btn:hover { background: #ccc; }
-.px-btn:active { background: #888; }
-.px-btn.ghost { color: #555; background: transparent; border: 1px solid #222; }
-.px-btn.ghost:hover { border-color: #555; color: #aaa; }
+/* DENIED */
+.denied-screen { max-width:720px; background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); padding:clamp(28px,5vw,56px); box-shadow:var(--shadow); }
+.denied-tag { font-size:12px; color:var(--muted); margin-bottom:14px; }
+.denied-title { font-size:clamp(32px,5vw,56px); line-height:1.02; letter-spacing:-.04em; margin-bottom:24px; }
+.denied-desc { font-size:14px; color:var(--muted); line-height:1.75; margin-bottom:28px; }
+.denied-desc strong { color:var(--text); }
+.denied-btns { display:flex; flex-wrap:wrap; gap:10px; }
 
-/* ── DENIED SCREEN ── */
-.denied-screen { padding-top: clamp(32px,6vh,64px); max-width: 680px; }
-.denied-tag { font-size: clamp(6px,.8vw,9px); color: #333; letter-spacing: 3px; margin-bottom: clamp(14px,2vw,24px); }
-.denied-title { font-size: clamp(14px,2.2vw,28px); color: #fff; line-height: 1.7; margin-bottom: clamp(20px,3vw,36px); }
-.denied-desc { font-size: clamp(7px,.9vw,11px); color: #444; letter-spacing: 1px; line-height: 2.8; margin-bottom: clamp(24px,3.5vw,44px); }
-.denied-desc strong { color: #777; font-weight: normal; }
-.denied-btns { display: flex; flex-wrap: wrap; gap: clamp(10px,1.5vw,18px); }
+/* CITY PICKER */
+.picker-screen { display:flex; flex-direction:column; gap:28px; }
+.picker-top { display:flex; justify-content:space-between; align-items:flex-start; gap:16px; flex-wrap:wrap; }
+.picker-title { font-size:clamp(34px,5vw,64px); font-weight:700; letter-spacing:-.05em; }
+.picker-layout { display:grid; grid-template-columns:minmax(0,1fr) minmax(280px,360px); gap:clamp(32px,6vw,88px); align-items:start; }
+.city-list-wrap { column-count:2; column-gap:38px; }
+.alpha-group { break-inside:avoid; margin-bottom:24px; }
+.alpha-letter { font-size:12px; font-weight:700; color:var(--muted); padding-bottom:8px; border-bottom:1px solid var(--line); }
+.city-item { display:block; padding:9px 0; border-bottom:1px solid #efefed; font-size:14px; color:#555; cursor:pointer; transition:.15s; }
+.city-item:hover, .city-item.active { color:var(--text); transform:translateX(3px); }
+.city-search-wrap { position:sticky; top:86px; display:flex; flex-direction:column; gap:12px; }
+.city-search { width:100%; background:var(--surface); color:var(--text); border:1px solid var(--line); border-radius:16px; padding:14px 16px; outline:0; }
+.city-search:focus { border-color:#bdbdb8; box-shadow:0 0 0 4px rgba(0,0,0,.025); }
+.city-search::placeholder { color:#aaa; }
+.search-results { display:flex; flex-direction:column; max-height:50vh; overflow-y:auto; border-radius:16px; overflow:hidden; }
+.sr-item { padding:12px 14px; border-bottom:1px solid var(--line); background:var(--surface); color:#555; cursor:pointer; font-size:13px; line-height:1.35; }
+.sr-item:hover, .sr-item.active { color:var(--text); background:var(--soft); }
+.sr-coords { display:block; font-size:11px; color:#aaa; margin-top:4px; }
+.search-hint { font-size:12px; color:var(--muted); padding:10px 2px; }
+.selected-box { border-top:1px solid var(--line); padding-top:16px; display:flex; flex-direction:column; gap:10px; }
+.selected-name { font-size:18px; font-weight:600; }
+.selected-coord { font-size:12px; color:var(--muted); }
 
-/* ── CITY PICKER ── */
-.picker-screen { display: flex; flex-direction: column; gap: clamp(16px,2.5vw,32px); }
-.picker-top { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 12px; margin-bottom: 4px; }
-.picker-title { font-size: clamp(10px,1.5vw,18px); color: #fff; line-height: 1.7; }
-.picker-layout { display: flex; gap: clamp(32px,5vw,80px); align-items: flex-start; }
+/* WEATHER */
+.clock { position:fixed; top:33px; right:28px; z-index:10; color:var(--muted); font-size:13px; font-variant-numeric:tabular-nums; }
+.layout { max-width:1500px; margin:0 auto; display:grid; grid-template-columns:minmax(0,1.4fr) minmax(250px,.72fr) minmax(220px,.62fr); gap:24px; align-items:start; }
+.col-left, .col-mid, .col-right { background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); box-shadow:var(--shadow); }
+.col-left { padding:clamp(28px,4vw,56px); min-height:640px; }
+.col-mid, .col-right { padding:26px; }
+.city-name { font-size:clamp(44px,6vw,88px); font-weight:700; line-height:.95; letter-spacing:-.065em; max-width:900px; word-break:break-word; }
+.coords { font-size:12px; color:var(--muted); margin:14px 0 54px; font-variant-numeric:tabular-nums; }
+.hero-weather { display:flex; align-items:center; gap:24px; }
+.temp-now { font-size:clamp(76px,10vw,142px); line-height:.85; letter-spacing:-.08em; font-weight:600; margin:18px 0 16px; }
+.temp-unit { font-size:.24em; color:var(--muted); vertical-align:top; margin-left:8px; font-weight:500; letter-spacing:0; }
+.feels { font-size:13px; color:var(--muted); margin-bottom:34px; }
+.compare { color:var(--muted); font-size:14px; line-height:1.6; margin-bottom:42px; }
+.compare-hl { display:flex; align-items:center; gap:8px; color:var(--text); font-weight:600; font-size:17px; margin:8px 0 3px; }
+.meta { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); border-top:1px solid var(--line); }
+.meta-item { padding:20px 0 0; display:flex; flex-direction:column; gap:7px; }
+.meta-val { font-size:22px; font-weight:600; letter-spacing:-.03em; }
+.period-row { display:grid; grid-template-columns:minmax(75px,1fr) 32px auto; align-items:center; gap:14px; padding:17px 0; border-top:1px solid var(--line); }
+.period-row:last-child, .forecast-row:last-child { border-bottom:1px solid var(--line); }
+.pname, .fday { font-size:13px; color:var(--muted); }
+.ptemp-wind { display:flex; flex-direction:column; align-items:flex-end; gap:2px; }
+.ptemp { font-size:16px; font-weight:600; }
+.pwind { font-size:11px; color:#999; }
+.forecast-row { display:grid; grid-template-columns:30px 26px 34px minmax(42px,1fr) 34px; align-items:center; gap:9px; padding:14px 0; border-top:1px solid var(--line); }
+.fday.today { color:var(--text); font-weight:700; }
+.flow, .fhigh { font-size:12px; font-variant-numeric:tabular-nums; text-align:right; }
+.flow { color:var(--muted); }
+.fhigh { color:var(--text); font-weight:600; }
+.range-wrap { height:3px; background:var(--soft); border-radius:99px; position:relative; overflow:hidden; }
+.range-fill { position:absolute; top:0; height:100%; background:#222; border-radius:99px; opacity:.65; }
 
-/* left: alphabetical list */
-.city-list-wrap { flex: 1; min-width: 0; column-count: 2; column-gap: clamp(16px,3vw,48px); }
-.alpha-group { break-inside: avoid; margin-bottom: clamp(12px,2vw,22px); }
-.alpha-letter { font-size: clamp(6px,.7vw,8px); color: #222; letter-spacing: 3px; border-bottom: 1px solid #111; padding-bottom: 5px; margin-bottom: 5px; }
-.city-item { font-size: clamp(7px,.85vw,10px); color: #444; padding: clamp(4px,.7vw,8px) 0; border-bottom: 1px solid #0a0a0a; cursor: pointer; letter-spacing: 1px; display: block; }
-.city-item:hover, .city-item.active { color: #fff; }
-
-/* right: search */
-.city-search-wrap { width: clamp(200px,26vw,320px); flex-shrink: 0; display: flex; flex-direction: column; gap: 12px; position: sticky; top: clamp(64px,7vw,88px); }
-.search-label { font-size: clamp(6px,.75vw,9px); color: #333; letter-spacing: 3px; margin-bottom: 4px; }
-.city-search { font-family: 'Press Start 2P', monospace; font-size: clamp(7px,.9vw,10px); background: #000; color: #fff; border: 1px solid #2a2a2a; padding: clamp(8px,1.2vw,14px) clamp(10px,1.4vw,16px); letter-spacing: 2px; outline: none; width: 100%; caret-color: #fff; }
-.city-search:focus { border-color: #555; }
-.city-search::placeholder { color: #1a1a1a; }
-.search-results { display: flex; flex-direction: column; max-height: 55vh; overflow-y: auto; }
-.sr-item { font-size: clamp(7px,.85vw,10px); color: #555; padding: clamp(7px,1vw,11px) clamp(10px,1.4vw,14px); border-top: 1px solid #0e0e0e; cursor: pointer; letter-spacing: 1px; line-height: 1.8; }
-.sr-item:last-child { border-bottom: 1px solid #0e0e0e; }
-.sr-item:hover, .sr-item.active { color: #fff; background: #0a0a0a; }
-.sr-coords { display: block; font-size: clamp(5px,.6vw,7px); color: #2a2a2a; margin-top: 4px; }
-.search-hint { font-size: clamp(6px,.75vw,9px); color: #222; letter-spacing: 2px; padding: 10px 0; animation: blink 1s step-end infinite; }
-.selected-box { border-top: 1px solid #111; padding-top: 12px; display: flex; flex-direction: column; gap: 10px; }
-.selected-name { font-size: clamp(9px,1.1vw,14px); color: #fff; }
-.selected-coord { font-size: clamp(6px,.7vw,8px); color: #333; letter-spacing: 1px; }
-
-/* ── WEATHER LAYOUT ── */
-.clock { font-size: clamp(7px,1vw,10px); color: #333; letter-spacing: 3px; margin-bottom: clamp(28px,4vw,52px); }
-.layout { display: flex; gap: clamp(24px,4vw,72px); align-items: flex-start; }
-.col-left  { flex: 1; min-width: 0; }
-.col-mid   { width: clamp(200px,26vw,340px); flex-shrink: 0; }
-.col-right { width: clamp(150px,18vw,250px); flex-shrink: 0; }
-.city-name { font-size: clamp(28px,5vw,72px); line-height: 1.3; margin-bottom: clamp(6px,.8vw,12px); word-break: break-word; }
-.coords { font-size: clamp(7px,.8vw,10px); color: #333; letter-spacing: 2px; margin-bottom: clamp(28px,4vw,52px); }
-.temp-now { font-size: clamp(44px,8vw,100px); line-height: 1; margin: clamp(10px,1.5vw,20px) 0 clamp(8px,1vw,14px); }
-.temp-unit { font-size: clamp(14px,2vw,26px); color: #555; vertical-align: super; margin-left: 4px; }
-.feels { font-size: clamp(7px,.9vw,11px); color: #444; letter-spacing: 2px; margin-bottom: clamp(16px,2.5vw,32px); }
-.compare { font-size: clamp(8px,1vw,13px); color: #555; letter-spacing: 1px; line-height: 2.6; margin-bottom: clamp(28px,4vw,52px); }
-.compare-hl { font-size: clamp(9px,1.2vw,15px); color: #fff; display: block; margin: clamp(8px,1vw,14px) 0; letter-spacing: 1px; }
-.meta { display: flex; gap: clamp(24px,4vw,64px); margin-bottom: clamp(28px,4vw,52px); flex-wrap: wrap; }
-.meta-item { display: flex; flex-direction: column; gap: clamp(6px,.8vw,12px); }
-.meta-lbl { font-size: clamp(7px,.8vw,10px); color: #333; letter-spacing: 2px; }
-.meta-val { font-size: clamp(10px,1.4vw,18px); }
-.period-row { display: flex; align-items: center; gap: clamp(10px,1.5vw,22px); padding: clamp(10px,1.4vw,18px) 0; border-top: 1px solid #111; }
-.period-row:last-child { border-bottom: 1px solid #111; }
-.pname { font-size: clamp(8px,1vw,13px); color: #555; width: clamp(72px,9vw,120px); letter-spacing: 1px; flex-shrink: 0; }
-.ptemp-wind { display: flex; flex-direction: column; gap: 5px; }
-.ptemp { font-size: clamp(10px,1.4vw,18px); }
-.pwind { font-size: clamp(6px,.75vw,9px); color: #444; letter-spacing: 1px; }
-.forecast-row { display: flex; align-items: center; gap: clamp(6px,1vw,14px); padding: clamp(8px,1.2vw,16px) 0; border-top: 1px solid #111; }
-.forecast-row:last-child { border-bottom: 1px solid #111; }
-.fday { font-size: clamp(7px,.85vw,11px); color: #444; width: clamp(22px,2.8vw,36px); letter-spacing: 1px; flex-shrink: 0; }
-.fday.today { color: #fff; }
-.flow { font-size: clamp(7px,.85vw,10px); color: #444; min-width: clamp(18px,2.5vw,30px); text-align: right; flex-shrink: 0; }
-.fhigh { font-size: clamp(8px,1vw,12px); min-width: clamp(18px,2.5vw,30px); text-align: right; flex-shrink: 0; }
-.range-wrap { flex: 1; height: 2px; background: #111; position: relative; min-width: 20px; }
-.range-fill { position: absolute; top: 0; height: 2px; background: #fff; opacity: 0.2; }
-
-/* ── RESPONSIVE ── */
+@media (max-width: 1050px) {
+  .layout { grid-template-columns:1fr 1fr; }
+  .col-left { grid-column:1 / -1; min-height:auto; }
+}
 @media (max-width: 700px) {
-  body { padding: 24px 20px; padding-top: 64px; }
-  .layout { flex-direction: column; gap: 40px; }
-  .col-mid, .col-right { width: 100%; }
-  .city-name { font-size: clamp(26px,9vw,44px); }
-  .temp-now { font-size: clamp(52px,18vw,80px); }
-  .picker-layout { flex-direction: column; }
-  .city-search-wrap { width: 100%; position: static; }
-  .city-list-wrap { column-count: 1; }
-}
-@media (min-width:701px) and (max-width:1024px) {
-  .col-mid { width: clamp(160px,28vw,240px); }
-  .col-right { width: clamp(130px,22vw,180px); }
-  .city-name { font-size: clamp(24px,4.5vw,48px); }
-  .city-list-wrap { column-count: 2; }
-}
-@media (min-width:1600px) {
-  body { padding: 64px 96px; padding-top: 96px; }
-  .city-name { font-size: clamp(56px,4.5vw,88px); }
-  .temp-now { font-size: clamp(80px,7vw,120px); }
-  .col-mid { width: 360px; }
-  .col-right { width: 280px; }
+  body { padding:82px 14px 28px; }
+  .ham-btn { top:16px; left:14px; }
+  .clock { top:27px; right:16px; }
+  .layout { grid-template-columns:1fr; gap:14px; }
+  .col-left, .col-mid, .col-right { padding:22px; border-radius:20px; }
+  .col-left { grid-column:auto; }
+  .city-name { font-size:clamp(42px,16vw,68px); }
+  .coords { margin-bottom:38px; }
+  .temp-now { font-size:clamp(78px,27vw,112px); }
+  .meta { gap:12px; }
+  .meta-val { font-size:18px; }
+  .picker-layout { grid-template-columns:1fr; }
+  .city-list-wrap { column-count:1; }
+  .city-search-wrap { position:static; }
 }
 </style>
 </head>
@@ -180,58 +169,54 @@ body::after {
 <div class="panel-overlay" id="panel-overlay" onclick="closePanel()"></div>
 <div class="side-panel" id="side-panel">
   <div class="panel-top">
-    <div class="panel-title">SZUKAJ MIEJSCOWOSCI</div>
+    <div class="panel-title">Szukaj miejscowości</div>
     <button class="panel-close" onclick="closePanel()">✕</button>
   </div>
-  <input class="city-search" id="panel-search-input" type="text" placeholder="NP. ZAKOPANE" autocomplete="off" spellcheck="false" oninput="onPanelInput(this.value)"/>
+  <input class="city-search" id="panel-search-input" type="text" placeholder="np. Zakopane" autocomplete="off" spellcheck="false" oninput="onPanelInput(this.value)"/>
   <div class="search-results" id="panel-results"></div>
   <div id="panel-selected"></div>
 </div>
 
-<div id="app"><div class="loading">LADOWANIE...</div></div>
+<div id="app"><div class="loading">Ładowanie…</div></div>
 
 <script>
-// ── PIXEL ICONS ────────────────────────────────────────────────────────────
-function pxIcon(pixels, size) {
-  const c=size/8; let s='';
-  for(const [x,y,v] of pixels){
-    const fill=v===2?'#fff':v===1?'#777':'#333';
-    s+=`<rect x="${x*c}" y="${y*c}" width="${c}" height="${c}" fill="${fill}"/>`;
-  }
-  return `<svg class="px-icon" width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" xmlns="http://www.w3.org/2000/svg">${s}</svg>`;
+// ── MIN.IMAL LINE ICONS ─────────────────────────────────────────────────────
+function lineIcon(type, size=24){
+  const paths={
+    sun:`<circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"></path>`,
+    cloud:`<path d="M7 18h10a4 4 0 0 0 .6-7.96A6 6 0 0 0 6.3 8.2 4.5 4.5 0 0 0 7 18Z"></path>`,
+    partly:`<path d="M14 4a5 5 0 0 1 4.9 6"></path><path d="M17.5 2.5 18 1M21.5 6H23M19.8 4.2l1.1-1.1"></path><path d="M7 19h10a4 4 0 0 0 .6-7.96A6 6 0 0 0 6.3 9.2 4.5 4.5 0 0 0 7 19Z"></path>`,
+    rain:`<path d="M7 15h10a4 4 0 0 0 .6-7.96A6 6 0 0 0 6.3 5.2 4.5 4.5 0 0 0 7 15Z"></path><path d="M8 18l-1 3M13 18l-1 3M18 18l-1 3"></path>`,
+    snow:`<path d="M7 14h10a4 4 0 0 0 .6-7.96A6 6 0 0 0 6.3 4.2 4.5 4.5 0 0 0 7 14Z"></path><path d="M8 18h.01M12 20h.01M16 18h.01M19 21h.01"></path>`,
+    thunder:`<path d="M7 14h10a4 4 0 0 0 .6-7.96A6 6 0 0 0 6.3 4.2 4.5 4.5 0 0 0 7 14Z"></path><path d="m13 14-2 4h3l-2 4"></path>`,
+    fog:`<path d="M4 9h16M6 13h12M4 17h16"></path>`,
+    up:`<path d="M12 19V5M6 11l6-6 6 6"></path>`,
+    down:`<path d="M12 5v14M18 13l-6 6-6-6"></path>`,
+    equal:`<path d="M5 9h14M5 15h14"></path>`
+  };
+  return `<span class="weather-icon" style="width:${size}px;height:${size}px"><svg viewBox="0 0 24 24" aria-hidden="true">${paths[type]||paths.cloud}</svg></span>`;
 }
-const ICONS = {
-  sun:     [[3,0,1],[4,0,1],[0,3,1],[7,3,1],[1,1,1],[6,1,1],[2,2,2],[3,2,2],[4,2,2],[5,2,2],[1,3,2],[2,3,2],[3,3,2],[4,3,2],[5,3,2],[6,3,2],[2,4,2],[3,4,2],[4,4,2],[5,4,2],[1,5,1],[6,5,1],[0,4,1],[7,4,1],[3,7,1],[4,7,1]],
-  cloud:   [[2,1,1],[3,1,2],[4,1,2],[5,1,1],[1,2,2],[2,2,2],[3,2,2],[4,2,2],[5,2,2],[6,2,2],[0,3,2],[1,3,2],[2,3,2],[3,3,2],[4,3,2],[5,3,2],[6,3,2],[7,3,2],[0,4,2],[1,4,2],[2,4,2],[3,4,2],[4,4,2],[5,4,2],[6,4,2],[7,4,2],[1,5,1],[2,5,1],[3,5,1],[4,5,1],[5,5,1],[6,5,1]],
-  partly:  [[5,0,1],[6,0,1],[4,1,1],[7,1,1],[5,2,1],[6,2,1],[1,2,1],[2,2,2],[3,2,2],[4,2,1],[0,3,2],[1,3,2],[2,3,2],[3,3,2],[4,3,2],[5,3,1],[0,4,2],[1,4,2],[2,4,2],[3,4,2],[4,4,2],[5,4,1],[1,5,1],[2,5,1],[3,5,1],[4,5,1]],
-  rain:    [[2,0,1],[3,0,2],[4,0,2],[5,0,1],[1,1,2],[2,1,2],[3,1,2],[4,1,2],[5,1,2],[6,1,2],[0,2,2],[1,2,2],[2,2,2],[3,2,2],[4,2,2],[5,2,2],[6,2,2],[7,2,2],[1,4,1],[4,4,1],[7,4,1],[0,5,1],[3,5,1],[6,5,1],[1,6,1],[4,6,1],[7,6,1],[0,7,1],[3,7,1],[6,7,1]],
-  snow:    [[2,0,1],[3,0,2],[4,0,2],[5,0,1],[1,1,2],[2,1,2],[3,1,2],[4,1,2],[5,1,2],[6,1,2],[0,2,2],[1,2,2],[2,2,2],[3,2,2],[4,2,2],[5,2,2],[6,2,2],[7,2,2],[3,4,2],[4,4,2],[1,5,2],[2,5,2],[3,5,2],[4,5,2],[5,5,2],[6,5,2],[3,6,2],[4,6,2],[2,7,1],[5,7,1]],
-  thunder: [[2,0,1],[3,0,2],[4,0,2],[5,0,1],[1,1,2],[2,1,2],[3,1,2],[4,1,2],[5,1,2],[6,1,2],[0,2,2],[1,2,2],[2,2,2],[3,2,2],[4,2,2],[5,2,2],[6,2,2],[7,2,2],[4,3,2],[5,3,2],[3,4,2],[4,4,2],[2,5,2],[3,5,2],[4,5,2],[3,6,2],[4,6,2],[4,7,1]],
-  fog:     [[0,1,1],[1,1,2],[2,1,2],[3,1,2],[4,1,2],[5,1,2],[6,1,2],[7,1,1],[0,3,1],[1,3,1],[2,3,2],[3,3,2],[4,3,2],[5,3,2],[6,3,1],[7,3,1],[0,5,1],[1,5,2],[2,5,2],[3,5,2],[4,5,2],[5,5,2],[6,5,2],[7,5,1]],
-  moon:    [[4,0,1],[5,0,2],[6,0,1],[3,1,1],[4,1,2],[5,2,2],[6,1,1],[2,2,2],[3,2,2],[6,2,1],[2,3,2],[3,3,2],[6,3,1],[3,4,1],[4,4,2],[5,4,1],[6,4,1],[4,5,1],[5,5,2],[6,5,1],[5,6,1],[6,6,1]],
-  arrUp:   [[3,1,2],[4,1,2],[2,2,2],[3,2,2],[4,2,2],[5,2,2],[1,3,2],[2,3,2],[3,3,2],[4,3,2],[5,3,2],[6,3,2],[3,4,2],[4,4,2],[3,5,2],[4,5,2],[3,6,2],[4,6,2]],
-  arrDn:   [[3,1,2],[4,1,2],[3,2,2],[4,2,2],[3,3,2],[4,3,2],[1,4,2],[2,4,2],[3,4,2],[4,4,2],[5,4,2],[6,4,2],[2,5,2],[3,5,2],[4,5,2],[5,5,2],[3,6,2],[4,6,2]],
-  arrEq:   [[0,2,2],[1,2,2],[2,2,2],[3,2,2],[4,2,2],[5,2,2],[6,2,2],[7,2,2],[0,5,2],[1,5,2],[2,5,2],[3,5,2],[4,5,2],[5,5,2],[6,5,2],[7,5,2]],
-};
-function iconSize(b){const w=window.innerWidth;return w<480?Math.round(b*1.4):w<768?Math.round(b*1.2):w>1600?Math.round(b*1.6):b;}
+function iconSize(b){const w=window.innerWidth;return w<480?Math.round(b*1.15):w>1600?Math.round(b*1.2):b;}
 function wmoIcon(code,b){
   const sz=iconSize(b);
-  if(code===0)  return pxIcon(ICONS.sun,sz);
-  if(code<=2)   return pxIcon(ICONS.partly,sz);
-  if(code===3)  return pxIcon(ICONS.cloud,sz);
-  if(code<=48)  return pxIcon(ICONS.fog,sz);
-  if(code<=67)  return pxIcon(ICONS.rain,sz);
-  if(code<=77)  return pxIcon(ICONS.snow,sz);
-  if(code<=82)  return pxIcon(ICONS.rain,sz);
-  if(code<=86)  return pxIcon(ICONS.snow,sz);
-  return pxIcon(ICONS.thunder,sz);
+  if(code===0) return lineIcon('sun',sz);
+  if(code<=2) return lineIcon('partly',sz);
+  if(code===3) return lineIcon('cloud',sz);
+  if(code<=48) return lineIcon('fog',sz);
+  if(code<=67) return lineIcon('rain',sz);
+  if(code<=77) return lineIcon('snow',sz);
+  if(code<=82) return lineIcon('rain',sz);
+  if(code<=86) return lineIcon('snow',sz);
+  return lineIcon('thunder',sz);
 }
+function compareIcon(key,size){ return lineIcon(key==='arrUp'?'up':key==='arrDn'?'down':'equal',size); }
+
 function wmoDesc(code){
-  if(code===0)return'BEZCHMURNIE';if(code<=2)return'CZ. ZACHMURZENIE';
-  if(code===3)return'POCHMURNO';if(code<=48)return'MGLA';
-  if(code<=55)return'MZAWKA';if(code<=67)return'DESZCZ';
-  if(code<=77)return'SNIEG';if(code<=82)return'PRZELOTNY DESZCZ';
-  if(code<=86)return'OPADY SNIEGU';return'BURZA';
+  if(code===0)return'Bezchmurnie';if(code<=2)return'Częściowe zachmurzenie';
+  if(code===3)return'Pochmurno';if(code<=48)return'Mgła';
+  if(code<=55)return'Mżawka';if(code<=67)return'Deszcz';
+  if(code<=77)return'Śnieg';if(code<=82)return'Przelotny deszcz';
+  if(code<=86)return'Opady śniegu';return'Burza';
 }
 
 // ── HELPERS ───────────────────────────────────────────────────────────────
@@ -239,56 +224,56 @@ const $   = id => document.getElementById(id);
 const pad = n  => String(n).padStart(2,'0');
 const avg = a  => a.length?a.reduce((x,y)=>x+y)/a.length:0;
 const set = html => { $('app').innerHTML=html; };
-const DAYS  = ['ND','PN','WT','SR','CZ','PT','SO'];
-const PARTS = [{name:'RANO',s:6,e:11},{name:'POLUDNIE',s:11,e:15},{name:'WIECZOR',s:17,e:21},{name:'NOC',s:21,e:24}];
+const DAYS  = ['Nd','Pn','Wt','Śr','Cz','Pt','So'];
+const PARTS = [{name:'Rano',s:6,e:11},{name:'Południe',s:11,e:15},{name:'Wieczór',s:17,e:21},{name:'Noc',s:21,e:24}];
 
 // ── CITIES LIST ───────────────────────────────────────────────────────────
 const CITIES = [
   {name:'AUGUSTOW',    lat:53.8440,lon:22.9793},
-  {name:'BIALYSTOK',   lat:53.1325,lon:23.1688},
-  {name:'BIELSKO-BIALA',lat:49.8224,lon:19.0446},
+  {name:'BIAŁYSTOK',   lat:53.1325,lon:23.1688},
+  {name:'BIELSKO-BIAŁA',lat:49.8224,lon:19.0446},
   {name:'BYDGOSZCZ',   lat:53.1235,lon:18.0084},
-  {name:'CHELM',       lat:51.1435,lon:23.4716},
-  {name:'CZESTOCHOWA', lat:50.8118,lon:19.1203},
-  {name:'ELBLAG',      lat:54.1559,lon:19.4044},
-  {name:'GDANSK',      lat:54.3520,lon:18.6466},
+  {name:'CHEŁM',       lat:51.1435,lon:23.4716},
+  {name:'CZĘSTOCHOWA', lat:50.8118,lon:19.1203},
+  {name:'ELBLĄG',      lat:54.1559,lon:19.4044},
+  {name:'GDAŃSK',      lat:54.3520,lon:18.6466},
   {name:'GDYNIA',      lat:54.5189,lon:18.5305},
-  {name:'GORZOW WLKP', lat:52.7325,lon:15.2369},
-  {name:'GRUDZIADZ',   lat:53.4836,lon:18.7536},
-  {name:'JELENIA GORA',lat:50.9044,lon:15.7196},
+  {name:'GORZÓW WLKP.', lat:52.7325,lon:15.2369},
+  {name:'GRUDZIĄDZ',   lat:53.4836,lon:18.7536},
+  {name:'JELENIA GÓRA',lat:50.9044,lon:15.7196},
   {name:'KALISZ',      lat:51.7578,lon:18.0858},
   {name:'KATOWICE',    lat:50.2649,lon:19.0238},
   {name:'KIELCE',      lat:50.8661,lon:20.6286},
   {name:'KOSZALIN',    lat:54.1943,lon:16.1720},
-  {name:'KRAKOW',      lat:50.0647,lon:19.9450},
+  {name:'KRAKÓW',      lat:50.0647,lon:19.9450},
   {name:'KROSNO',      lat:49.6893,lon:21.7714},
   {name:'LEGNICA',     lat:51.2070,lon:16.1619},
-  {name:'LODZ',        lat:51.7592,lon:19.4560},
-  {name:'LOMZA',       lat:53.1783,lon:22.0591},
+  {name:'ŁÓDŹ',        lat:51.7592,lon:19.4560},
+  {name:'ŁOMŻA',       lat:53.1783,lon:22.0591},
   {name:'LUBLIN',      lat:51.2465,lon:22.5684},
-  {name:'NOWY SACZ',   lat:49.6246,lon:20.6935},
+  {name:'NOWY SĄCZ',   lat:49.6246,lon:20.6935},
   {name:'OLSZTYN',     lat:53.7784,lon:20.4801},
   {name:'OPOLE',       lat:50.6751,lon:17.9213},
   {name:'OSTROLEKA',   lat:53.0855,lon:21.5680},
-  {name:'PIOTRKOW TR', lat:51.4040,lon:19.7030},
+  {name:'PIOTRKÓW TRYB.', lat:51.4040,lon:19.7030},
   {name:'PLOCK',       lat:52.5463,lon:19.7066},
-  {name:'POZNAN',      lat:52.4064,lon:16.9252},
-  {name:'PRZEMYSL',    lat:49.7838,lon:22.7677},
+  {name:'POZNAŃ',      lat:52.4064,lon:16.9252},
+  {name:'PRZEMYŚL',    lat:49.7838,lon:22.7677},
   {name:'RADOM',       lat:51.4027,lon:21.1471},
   {name:'RZESZOW',     lat:50.0413,lon:21.9990},
   {name:'SIEDLCE',     lat:52.1677,lon:22.2903},
   {name:'SKIERNIEWICE',lat:51.9591,lon:20.1585},
-  {name:'SLUPSK',      lat:54.4641,lon:17.0286},
+  {name:'SŁUPSK',      lat:54.4641,lon:17.0286},
   {name:'SOSNOWIEC',   lat:50.2863,lon:19.1041},
-  {name:'SUWALKI',     lat:54.1116,lon:22.9302},
+  {name:'SUWAŁKI',     lat:54.1116,lon:22.9302},
   {name:'SZCZECIN',    lat:53.4285,lon:14.5528},
-  {name:'TARNOW',      lat:50.0121,lon:20.9858},
-  {name:'TORUN',       lat:53.0138,lon:18.5984},
+  {name:'TARNÓW',      lat:50.0121,lon:20.9858},
+  {name:'TORUŃ',       lat:53.0138,lon:18.5984},
   {name:'WARSZAWA',    lat:52.2297,lon:21.0122},
-  {name:'WLOCLAWEK',   lat:52.6483,lon:19.0677},
-  {name:'WROCLAW',     lat:51.1079,lon:17.0385},
-  {name:'ZAMOSC',      lat:50.7230,lon:23.2520},
-  {name:'ZIELONA GORA',lat:51.9356,lon:15.5062},
+  {name:'WŁOCŁAWEK',   lat:52.6483,lon:19.0677},
+  {name:'WROCŁAW',     lat:51.1079,lon:17.0385},
+  {name:'ZAMOŚĆ',      lat:50.7230,lon:23.2520},
+  {name:'ZIELONA GÓRA',lat:51.9356,lon:15.5062},
 ].sort((a,b)=>a.name.localeCompare(b.name));
 
 // ── API ───────────────────────────────────────────────────────────────────
@@ -305,11 +290,11 @@ async function fetchWeather(lat,lon){
 
 // ── LOAD + RENDER WEATHER ─────────────────────────────────────────────────
 async function loadWeather(lat,lon,cityName){
-  set(`<div class="loading">LADOWANIE POGODY...</div>`);
+  set(`<div class="loading">Ładowanie pogody…</div>`);
   try{
     const[data,city]=await Promise.all([fetchWeather(lat,lon),cityName?Promise.resolve(cityName):getCityName(lat,lon)]);
     renderWeather(data,city,lat,lon);
-  }catch(e){set(`<div class="loading">BLAD: ${e.message}</div>`);}
+  }catch(e){set(`<div class="loading">BŁĄD: ${e.message}</div>`);}
 }
 
 function renderWeather(data,city,lat,lon){
@@ -322,7 +307,7 @@ function renderWeather(data,city,lat,lon){
   const todayMax=d.temperature_2m_max[tIdx],todayMin=d.temperature_2m_min[tIdx];
   const yestMax=yIdx>=0?d.temperature_2m_max[yIdx]:todayMax,diff=todayMax-yestMax;
   const arrKey=diff>2?'arrUp':diff<-2?'arrDn':'arrEq';
-  const cmpTxt=diff>2?`CIEPLEJ NIZ WCZORAJ (+${Math.round(diff)}C)`:diff<-2?`CHLODNIEJ NIZ WCZORAJ (${Math.round(diff)}C)`:'PODOBNIE JAK WCZORAJ';
+  const cmpTxt=diff>2?`Cieplej niż wczoraj (+${Math.round(diff)}°C)`:diff<-2?`Chłodniej niż wczoraj (${Math.round(diff)}°C)`:'Podobnie jak wczoraj';
 
   const partsHTML=PARTS.map(p=>{
     const temps=h.temperature_2m.slice(hOff+p.s,hOff+p.e);
@@ -348,21 +333,22 @@ function renderWeather(data,city,lat,lon){
     <div class="clock" id="clk">${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}</div>
     <div class="layout">
       <div class="col-left">
-        <div class="label">WITAJ W</div>
+        <div class="label">Aktualna pogoda</div>
         <div class="city-name">${city}</div>
         <div class="coords">${lat.toFixed(4)} N  ${lon.toFixed(4)} E</div>
-        ${wmoIcon(curCode,48)}
+        <div class="hero-weather">${wmoIcon(curCode,64)}
         <div class="temp-now">${curTemp}<span class="temp-unit">°C</span></div>
-        <div class="feels">ODCZUWALNA ${curFeels}°C</div>
-        <div class="compare">POGODA JEST<span class="compare-hl">${pxIcon(ICONS[arrKey],iconSize(12))} ${cmpTxt}</span>${wmoDesc(curCode)}</div>
+        </div>
+        <div class="feels">Odczuwalna ${curFeels}°C</div>
+        <div class="compare">W porównaniu z wczoraj<span class="compare-hl">${compareIcon(arrKey,18)} ${cmpTxt}</span>${wmoDesc(curCode)}</div>
         <div class="meta">
-          <div class="meta-item"><span class="meta-lbl">WIATR</span><span class="meta-val">${curWind} KM/H</span></div>
-          <div class="meta-item"><span class="meta-lbl">MAKS</span><span class="meta-val">${Math.round(todayMax)}°C</span></div>
-          <div class="meta-item"><span class="meta-lbl">MIN</span><span class="meta-val">${Math.round(todayMin)}°C</span></div>
+          <div class="meta-item"><span class="meta-lbl">Wiatr</span><span class="meta-val">${curWind} KM/H</span></div>
+          <div class="meta-item"><span class="meta-lbl">Maks.</span><span class="meta-val">${Math.round(todayMax)}°C</span></div>
+          <div class="meta-item"><span class="meta-lbl">Min.</span><span class="meta-val">${Math.round(todayMin)}°C</span></div>
         </div>
       </div>
-      <div class="col-mid"><div class="label">POGODA NA CALY DZIEN</div>${partsHTML}</div>
-      <div class="col-right"><div class="label">PROGNOZA 10 DNI</div>${forecastHTML}</div>
+      <div class="col-mid"><div class="label">Przebieg dnia</div>${partsHTML}</div>
+      <div class="col-right"><div class="label">Prognoza 10 dni</div>${forecastHTML}</div>
     </div>`);
 
   setInterval(()=>{const n=new Date(),el=$('clk');if(el)el.textContent=`${pad(n.getHours())}:${pad(n.getMinutes())}:${pad(n.getSeconds())}`;},1000);
@@ -370,18 +356,18 @@ function renderWeather(data,city,lat,lon){
 
 // ── DENIED / CITY PICKER ──────────────────────────────────────────────────
 function showDenied(errCode){
-  const msgs={1:'ZABLOKOWANO DOSTEP DO LOKALIZACJI.',2:'NIE MOZNA USTALIC POZYCJI.',3:'PRZEKROCZONO CZAS OCZEKIWANIA.'};
+  const msgs={1:'ZABLOKOWANO DOSTĘP DO LOKALIZACJI.',2:'NIE MOŻNA USTALIĆ POZYCJI.',3:'PRZEKROCZONO CZAS OCZEKIWANIA.'};
   const hint=errCode===1
-    ?`ABY ODBLOKOWAC: KLIKNIJ IKONKE <strong>KLODKI</strong> LUB <strong>"I"</strong><br>W PASKU ADRESU → LOKALIZACJA → ZEZWOL → ODSWIEZ STRONE.`
-    :`SPRAWDZ CZY PRZEGLĄDARKA MA DOSTEP DO LOKALIZACJI<br>I SPROBUJ PONOWNIE.`;
+    ?`ABY ODBLOKOWAĆ: KLIKNIJ IKONKĘ <strong>KŁÓDKI</strong> LUB <strong>"I"</strong><br>W PASKU ADRESU → LOKALIZACJA → ZEZWOL → ODŚWIEŻ STRONĘ.`
+    :`SPRAWDZ CZY PRZEGLĄDARKA MA DOSTĘP DO LOKALIZACJI<br>I SPRÓBUJ PONOWNIE.`;
   set(`
     <div class="denied-screen">
       <div class="denied-tag">JAKDZISIAJ.PL</div>
-      <div class="denied-title">BRAK DOSTEPU<br>DO LOKALIZACJI</div>
-      <div class="denied-desc">${msgs[errCode]||'LOKALIZACJA NIEDOSTEPNA.'}<br><br>${hint}</div>
+      <div class="denied-title">BRAK DOSTĘPU<br>DO LOKALIZACJI</div>
+      <div class="denied-desc">${msgs[errCode]||'LOKALIZACJA NIEDOSTĘPNA.'}<br><br>${hint}</div>
       <div class="denied-btns">
-        <button class="px-btn" onclick="tryGPS()">▸ SPROBUJ PONOWNIE</button>
-        <button class="px-btn ghost" onclick="showCityPicker()">▸ ZNAJDZ RECZNIE</button>
+        <button class="px-btn" onclick="tryGPS()">Spróbuj ponownie</button>
+        <button class="px-btn ghost" onclick="showCityPicker()">Znajdź ręcznie</button>
       </div>
     </div>`);
 }
@@ -403,14 +389,14 @@ function showCityPicker(){
   set(`
     <div class="picker-screen">
       <div class="picker-top">
-        <div class="picker-title">WYBIERZ MIEJSCOWOSC</div>
-        <button class="px-btn ghost" onclick="tryGPS()">▸ SPROBUJ GPS PONOWNIE</button>
+        <div class="picker-title">Wybierz miejscowość</div>
+        <button class="px-btn ghost" onclick="tryGPS()">Spróbuj GPS ponownie</button>
       </div>
       <div class="picker-layout">
         <div class="city-list-wrap">${listHTML}</div>
         <div class="city-search-wrap">
-          <div class="search-label">SZUKAJ MIEJSCOWOSCI</div>
-          <input class="city-search" id="picker-search" type="text" placeholder="NP. ZAKOPANE" autocomplete="off" spellcheck="false" oninput="onPickerSearch(this.value)"/>
+          <div class="search-label">Szukaj miejscowości</div>
+          <input class="city-search" id="picker-search" type="text" placeholder="np. Zakopane" autocomplete="off" spellcheck="false" oninput="onPickerSearch(this.value)"/>
           <div class="search-results" id="picker-results"></div>
           <div id="picker-selected"></div>
         </div>
@@ -431,7 +417,7 @@ function onPickerSearch(val){
   const el=$('picker-results');
   if(!el)return;
   if(!val||val.length<2){el.innerHTML='';return;}
-  el.innerHTML=`<div class="search-hint">SZUKAM...</div>`;
+  el.innerHTML=`<div class="search-hint">Szukam…</div>`;
   pickerTimeout=setTimeout(()=>doPickerSearch(val),420);
 }
 async function doPickerSearch(query){
@@ -439,13 +425,13 @@ async function doPickerSearch(query){
   try{
     const data=await(await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&countrycodes=pl&format=json&limit=8&accept-language=pl`)).json();
     pickerResults=data;
-    if(!data.length){el.innerHTML=`<div class="sr-item" style="cursor:default;color:#222">BRAK WYNIKOW</div>`;return;}
+    if(!data.length){el.innerHTML=`<div class="sr-item" style="cursor:default;color:#222">Brak wyników</div>`;return;}
     el.innerHTML=data.map((r,i)=>{
       const name=r.display_name.split(',').slice(0,2).join(', ').toUpperCase();
       const lat=parseFloat(r.lat).toFixed(4),lon=parseFloat(r.lon).toFixed(4);
       return`<div class="sr-item" onclick="selectPickerResult(${i})">${name}<span class="sr-coords">${lat} N  ${lon} E</span></div>`;
     }).join('');
-  }catch{el.innerHTML=`<div class="sr-item" style="cursor:default;color:#222">BLAD WYSZUKIWANIA</div>`;}
+  }catch{el.innerHTML=`<div class="sr-item" style="cursor:default;color:#222">Błąd wyszukiwania</div>`;}
 }
 function selectPickerResult(idx){
   const r=pickerResults[idx];if(!r)return;
@@ -453,7 +439,7 @@ function selectPickerResult(idx){
   const name=r.display_name.split(',')[0].toUpperCase();
   document.querySelectorAll('#picker-results .sr-item').forEach((el,i)=>el.classList.toggle('active',i===idx));
   const sel=$('picker-selected');
-  if(sel)sel.innerHTML=`<div class="selected-box"><div class="selected-name">${name}</div><div class="selected-coord">${lat.toFixed(4)} N  ${lon.toFixed(4)} E</div><button class="px-btn" onclick="loadWeather(${lat},${lon},'${name}')">▸ POKAZ POGODE</button></div>`;
+  if(sel)sel.innerHTML=`<div class="selected-box"><div class="selected-name">${name}</div><div class="selected-coord">${lat.toFixed(4)} N  ${lon.toFixed(4)} E</div><button class="px-btn" onclick="loadWeather(${lat},${lon},'${name}')">Pokaż pogodę</button></div>`;
 }
 
 // ── SIDE PANEL SEARCH ─────────────────────────────────────────────────────
@@ -472,7 +458,7 @@ function onPanelInput(val){
   clearTimeout(panelTimeout);
   const el=$('panel-results');if(!el)return;
   if(!val||val.length<2){el.innerHTML='';return;}
-  el.innerHTML=`<div class="search-hint">SZUKAM...</div>`;
+  el.innerHTML=`<div class="search-hint">Szukam…</div>`;
   panelTimeout=setTimeout(()=>doPanelSearch(val),420);
 }
 async function doPanelSearch(query){
@@ -480,13 +466,13 @@ async function doPanelSearch(query){
   try{
     const data=await(await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&countrycodes=pl&format=json&limit=8&accept-language=pl`)).json();
     panelResults=data;
-    if(!data.length){el.innerHTML=`<div class="sr-item" style="cursor:default;color:#222">BRAK WYNIKOW</div>`;return;}
+    if(!data.length){el.innerHTML=`<div class="sr-item" style="cursor:default;color:#222">Brak wyników</div>`;return;}
     el.innerHTML=data.map((r,i)=>{
       const name=r.display_name.split(',').slice(0,2).join(', ').toUpperCase();
       const lat=parseFloat(r.lat).toFixed(4),lon=parseFloat(r.lon).toFixed(4);
       return`<div class="sr-item" onclick="selectPanelResult(${i})">${name}<span class="sr-coords">${lat} N  ${lon} E</span></div>`;
     }).join('');
-  }catch{el.innerHTML=`<div class="sr-item" style="cursor:default;color:#222">BLAD WYSZUKIWANIA</div>`;}
+  }catch{el.innerHTML=`<div class="sr-item" style="cursor:default;color:#222">Błąd wyszukiwania</div>`;}
 }
 function selectPanelResult(idx){
   const r=panelResults[idx];if(!r)return;
@@ -494,12 +480,12 @@ function selectPanelResult(idx){
   const name=r.display_name.split(',')[0].toUpperCase();
   document.querySelectorAll('#panel-results .sr-item').forEach((el,i)=>el.classList.toggle('active',i===idx));
   const sel=$('panel-selected');
-  if(sel)sel.innerHTML=`<div class="selected-box"><div class="selected-name">${name}</div><div class="selected-coord">${lat.toFixed(4)} N  ${lon.toFixed(4)} E</div><button class="px-btn" onclick="closePanel();loadWeather(${lat},${lon},'${name}')">▸ POKAZ POGODE</button></div>`;
+  if(sel)sel.innerHTML=`<div class="selected-box"><div class="selected-name">${name}</div><div class="selected-coord">${lat.toFixed(4)} N  ${lon.toFixed(4)} E</div><button class="px-btn" onclick="closePanel();loadWeather(${lat},${lon},'${name}')">Pokaż pogodę</button></div>`;
 }
 
 // ── GPS ───────────────────────────────────────────────────────────────────
 async function tryGPS(){
-  set(`<div class="loading">POBIERANIE LOKALIZACJI...</div>`);
+  set(`<div class="loading">Pobieranie lokalizacji…</div>`);
   if(!navigator.geolocation){showDenied(0);return;}
   const pos=await new Promise((res,rej)=>navigator.geolocation.getCurrentPosition(res,rej,{timeout:10000,enableHighAccuracy:false,maximumAge:300000})).catch(e=>({error:e}));
   if(pos?.error){showDenied(pos.error.code);return;}
