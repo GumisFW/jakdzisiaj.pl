@@ -99,6 +99,105 @@ html[data-theme="dark"] .theme-moon { opacity:1; transform:rotate(0deg) scale(1)
 .panel-close { background:none; border:0; color:var(--muted); cursor:pointer; font-size:18px; padding:8px; border-radius:50%; }
 .panel-close:hover { color:var(--text); background:var(--soft); }
 
+
+/* PANEL TABS + CALENDAR */
+.panel-nav {
+  display:grid; grid-template-columns:1fr 1fr; gap:6px;
+  padding:5px; border:1px solid var(--line); background:var(--soft);
+  border-radius:14px;
+}
+.panel-tab {
+  border:0; background:transparent; color:var(--muted); cursor:pointer;
+  border-radius:10px; padding:10px 12px; font-size:13px; font-weight:650;
+  transition:background-color .2s ease,color .2s ease,box-shadow .2s ease;
+}
+.panel-tab.active {
+  background:var(--surface); color:var(--text);
+  box-shadow:0 2px 10px rgba(0,0,0,.06);
+}
+.panel-view { display:none; }
+.panel-view.active { display:block; }
+
+.calendar-shell { display:flex; flex-direction:column; gap:16px; }
+.calendar-head { display:flex; align-items:center; justify-content:space-between; gap:12px; }
+.calendar-month {
+  font-size:24px; font-weight:720; letter-spacing:-.035em; text-transform:capitalize;
+}
+.calendar-nav-btn {
+  width:38px; height:38px; border-radius:50%; border:1px solid var(--line);
+  background:var(--surface); color:var(--text); cursor:pointer; display:grid; place-items:center;
+  font-size:18px; line-height:1; transition:.18s ease;
+}
+.calendar-nav-btn:hover { background:var(--soft); transform:translateY(-1px); }
+.calendar-weekdays, .calendar-grid {
+  display:grid; grid-template-columns:repeat(7,minmax(0,1fr)); gap:5px;
+}
+.calendar-weekdays span {
+  text-align:center; color:var(--muted); font-size:10px; font-weight:700;
+  text-transform:uppercase; padding:4px 0 6px;
+}
+.calendar-day {
+  position:relative; aspect-ratio:1; min-width:0;
+  border:1px solid transparent; background:transparent; color:var(--text);
+  border-radius:12px; display:flex; align-items:center; justify-content:center;
+  font-size:12px; cursor:pointer; transition:.16s ease;
+}
+.calendar-day:hover { background:var(--soft); }
+.calendar-day.outside { color:var(--muted); opacity:.34; cursor:default; }
+.calendar-day.sunday { color:var(--muted); }
+.calendar-day.today {
+  background:var(--text); color:var(--button-text); font-weight:750;
+}
+.calendar-day.selected:not(.today) {
+  border-color:var(--text); font-weight:700;
+}
+.calendar-day.has-event::after {
+  content:''; position:absolute; bottom:5px; width:4px; height:4px;
+  border-radius:50%; background:currentColor; opacity:.7;
+}
+.calendar-day.today.has-event::after { background:var(--button-text); }
+.calendar-day.public-holiday:not(.today) { background:var(--soft); }
+
+.calendar-info {
+  border-top:1px solid var(--line); padding-top:16px;
+}
+.calendar-info-date {
+  color:var(--muted); font-size:11px; font-weight:700;
+  letter-spacing:.06em; text-transform:uppercase; margin-bottom:8px;
+}
+.calendar-info-title {
+  font-size:20px; font-weight:700; letter-spacing:-.025em; margin-bottom:8px;
+}
+.calendar-event-list { display:flex; flex-direction:column; gap:7px; }
+.calendar-event {
+  display:flex; align-items:flex-start; gap:9px; color:var(--muted);
+  font-size:13px; line-height:1.45;
+}
+.calendar-event::before {
+  content:''; flex:0 0 auto; width:6px; height:6px; border-radius:50%;
+  background:var(--text); margin-top:6px;
+}
+.calendar-empty { color:var(--muted); font-size:13px; line-height:1.55; }
+
+.trade-card {
+  border:1px solid var(--line); background:var(--soft); border-radius:18px;
+  padding:18px; margin-top:2px;
+}
+.trade-eyebrow {
+  color:var(--muted); font-size:10px; font-weight:750;
+  letter-spacing:.08em; text-transform:uppercase; margin-bottom:8px;
+}
+.trade-status {
+  font-size:20px; font-weight:750; letter-spacing:-.03em; line-height:1.2;
+}
+.trade-date { color:var(--muted); font-size:12px; margin-top:7px; line-height:1.5; }
+.trade-next { color:var(--muted); font-size:11px; margin-top:10px; line-height:1.5; }
+
+@media (max-width:480px) {
+  .side-panel { padding-left:20px; padding-right:20px; }
+  .calendar-day { border-radius:10px; }
+}
+
 /* SHARED */
 .label { margin-bottom: 18px; }
 .weather-icon { display:inline-flex; align-items:center; justify-content:center; color:var(--text); flex-shrink:0; }
@@ -290,12 +389,25 @@ html[data-theme="dark"] .theme-moon { opacity:1; transform:rotate(0deg) scale(1)
 <div class="panel-overlay" id="panel-overlay" onclick="closePanel()"></div>
 <div class="side-panel" id="side-panel">
   <div class="panel-top">
-    <div class="panel-title">Szukaj miejscowości</div>
-    <button class="panel-close" onclick="closePanel()">✕</button>
+    <div class="panel-title" id="panel-heading">Menu</div>
+    <button class="panel-close" onclick="closePanel()" aria-label="Zamknij menu">✕</button>
   </div>
-  <input class="city-search" id="panel-search-input" type="text" placeholder="np. Zakopane" autocomplete="off" spellcheck="false" oninput="onPanelInput(this.value)"/>
-  <div class="search-results" id="panel-results"></div>
-  <div id="panel-selected"></div>
+
+  <div class="panel-nav" role="tablist" aria-label="Menu">
+    <button class="panel-tab active" id="tab-search" type="button" role="tab" aria-selected="true" onclick="switchPanelTab('search')">Miejscowość</button>
+    <button class="panel-tab" id="tab-calendar" type="button" role="tab" aria-selected="false" onclick="switchPanelTab('calendar')">Kalendarz</button>
+  </div>
+
+  <div class="panel-view active" id="panel-view-search" role="tabpanel">
+    <div class="search-label" style="margin-bottom:10px">Szukaj miejscowości</div>
+    <input class="city-search" id="panel-search-input" type="text" placeholder="np. Zakopane" autocomplete="off" spellcheck="false" oninput="onPanelInput(this.value)"/>
+    <div class="search-results" id="panel-results"></div>
+    <div id="panel-selected"></div>
+  </div>
+
+  <div class="panel-view" id="panel-view-calendar" role="tabpanel">
+    <div id="calendar-panel"></div>
+  </div>
 </div>
 
 <div id="app"></div>
@@ -593,13 +705,233 @@ function selectPickerResult(idx){
   if(sel)sel.innerHTML=`<div class="selected-box"><div class="selected-name">${name}</div><div class="selected-coord">${lat.toFixed(4)} N  ${lon.toFixed(4)} E</div><button class="px-btn" onclick="loadWeather(${lat},${lon},'${name}')">Pokaż pogodę</button></div>`;
 }
 
+
+// ── PANEL TABS + CALENDAR ─────────────────────────────────────────────────
+const MONTH_NAMES = ['styczeń','luty','marzec','kwiecień','maj','czerwiec','lipiec','sierpień','wrzesień','październik','listopad','grudzień'];
+const MONTH_NAMES_GEN = ['stycznia','lutego','marca','kwietnia','maja','czerwca','lipca','sierpnia','września','października','listopada','grudnia'];
+const WEEKDAYS_LONG = ['niedziela','poniedziałek','wtorek','środa','czwartek','piątek','sobota'];
+let calendarCursor = new Date();
+calendarCursor = new Date(calendarCursor.getFullYear(), calendarCursor.getMonth(), 1);
+let calendarSelected = new Date();
+
+function dateKey(d){
+  return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+}
+function sameDay(a,b){
+  return a.getFullYear()===b.getFullYear() && a.getMonth()===b.getMonth() && a.getDate()===b.getDate();
+}
+function addDays(date,days){
+  const d=new Date(date.getFullYear(),date.getMonth(),date.getDate());
+  d.setDate(d.getDate()+days);
+  return d;
+}
+function easterSunday(year){
+  const a=year%19,b=Math.floor(year/100),c=year%100,d=Math.floor(b/4),e=b%4;
+  const f=Math.floor((b+8)/25),g=Math.floor((b-f+1)/3);
+  const h=(19*a+b-d-g+15)%30,i=Math.floor(c/4),k=c%4;
+  const l=(32+2*e+2*i-h-k)%7,m=Math.floor((a+11*h+22*l)/451);
+  const month=Math.floor((h+l-7*m+114)/31)-1;
+  const day=((h+l-7*m+114)%31)+1;
+  return new Date(year,month,day);
+}
+function polishPublicHolidays(year){
+  const easter=easterSunday(year);
+  const entries=[
+    [new Date(year,0,1),'Nowy Rok'],
+    [new Date(year,0,6),'Święto Trzech Króli'],
+    [easter,'Wielkanoc'],
+    [addDays(easter,1),'Poniedziałek Wielkanocny'],
+    [new Date(year,4,1),'Święto Pracy'],
+    [new Date(year,4,3),'Święto Konstytucji 3 Maja'],
+    [addDays(easter,49),'Zielone Świątki'],
+    [addDays(easter,60),'Boże Ciało'],
+    [new Date(year,7,15),'Wniebowzięcie NMP / Święto Wojska Polskiego'],
+    [new Date(year,10,1),'Wszystkich Świętych'],
+    [new Date(year,10,11),'Narodowe Święto Niepodległości'],
+    [new Date(year,11,24),'Wigilia Bożego Narodzenia'],
+    [new Date(year,11,25),'Boże Narodzenie'],
+    [new Date(year,11,26),'Drugi dzień Bożego Narodzenia']
+  ];
+  return Object.fromEntries(entries.map(([d,n])=>[dateKey(d),n]));
+}
+
+// Krótka, ręcznie dobrana lista powszechnie rozpoznawalnych dni.
+// Święta ustawowe są dodawane osobno przez polishPublicHolidays().
+const INTERESTING_DAYS = {
+  '01-21':['Dzień Babci'],
+  '01-22':['Dzień Dziadka'],
+  '02-14':['Walentynki'],
+  '03-08':['Dzień Kobiet'],
+  '03-21':['Pierwszy dzień wiosny'],
+  '04-22':['Dzień Ziemi'],
+  '05-26':['Dzień Matki'],
+  '06-01':['Dzień Dziecka'],
+  '06-21':['Pierwszy dzień lata'],
+  '06-23':['Dzień Ojca'],
+  '09-23':['Początek astronomicznej jesieni'],
+  '10-01':['Międzynarodowy Dzień Osób Starszych'],
+  '10-04':['Światowy Dzień Zwierząt'],
+  '10-05':['Światowy Dzień Nauczyciela'],
+  '10-07':['Światowy Dzień Bawełny'],
+  '10-10':['Światowy Dzień Zdrowia Psychicznego'],
+  '10-16':['Światowy Dzień Żywności'],
+  '10-24':['Dzień Narodów Zjednoczonych'],
+  '10-31':['Halloween'],
+  '11-21':['Światowy Dzień Życzliwości i Pozdrowień'],
+  '12-06':['Mikołajki'],
+  '12-31':['Sylwester']
+};
+
+function eventsForDate(d){
+  const publicDays=polishPublicHolidays(d.getFullYear());
+  const events=[];
+  const pub=publicDays[dateKey(d)];
+  if(pub) events.push({name:pub,publicHoliday:true});
+  const k=`${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+  (INTERESTING_DAYS[k]||[]).forEach(name=>{
+    if(!events.some(e=>e.name===name)) events.push({name,publicHoliday:false});
+  });
+  return events;
+}
+function isPublicHoliday(d){
+  return Boolean(polishPublicHolidays(d.getFullYear())[dateKey(d)]);
+}
+function lastSunday(year,monthIndex){
+  const d=new Date(year,monthIndex+1,0);
+  d.setDate(d.getDate()-d.getDay());
+  return d;
+}
+function tradingSundays(year){
+  const easter=easterSunday(year);
+  const dates=[
+    lastSunday(year,0),
+    addDays(easter,-7),
+    lastSunday(year,3),
+    lastSunday(year,5),
+    lastSunday(year,7)
+  ];
+  // Trzy kolejne niedziele poprzedzające Wigilię.
+  const christmasEve=new Date(year,11,24);
+  let d=addDays(christmasEve,-1);
+  while(d.getDay()!==0) d=addDays(d,-1);
+  dates.push(d,addDays(d,-7),addDays(d,-14));
+  return dates
+    .filter(d=>!isPublicHoliday(d))
+    .sort((a,b)=>a-b);
+}
+function isTradingSunday(date){
+  if(date.getDay()!==0) return false;
+  return tradingSundays(date.getFullYear()).some(d=>sameDay(d,date));
+}
+function nextSunday(from=new Date()){
+  const d=new Date(from.getFullYear(),from.getMonth(),from.getDate());
+  const add=(7-d.getDay())%7;
+  return addDays(d,add);
+}
+function nextTradingSundayAfter(from=new Date()){
+  for(let year=from.getFullYear();year<=from.getFullYear()+2;year++){
+    const hit=tradingSundays(year).find(d=>d>=new Date(from.getFullYear(),from.getMonth(),from.getDate()));
+    if(hit) return hit;
+  }
+  return null;
+}
+function formatLongDate(d){
+  return `${WEEKDAYS_LONG[d.getDay()]}, ${d.getDate()} ${MONTH_NAMES_GEN[d.getMonth()]} ${d.getFullYear()}`;
+}
+function renderCalendar(){
+  const root=$('calendar-panel'); if(!root)return;
+  const year=calendarCursor.getFullYear(), month=calendarCursor.getMonth();
+  const first=new Date(year,month,1), daysInMonth=new Date(year,month+1,0).getDate();
+  const mondayOffset=(first.getDay()+6)%7;
+  const today=new Date();
+  let days='';
+
+  for(let i=0;i<mondayOffset;i++){
+    days+=`<div class="calendar-day outside" aria-hidden="true"></div>`;
+  }
+  for(let day=1;day<=daysInMonth;day++){
+    const d=new Date(year,month,day);
+    const events=eventsForDate(d);
+    const classes=['calendar-day'];
+    if(d.getDay()===0) classes.push('sunday');
+    if(sameDay(d,today)) classes.push('today');
+    if(sameDay(d,calendarSelected)) classes.push('selected');
+    if(events.length) classes.push('has-event');
+    if(events.some(e=>e.publicHoliday)) classes.push('public-holiday');
+    const label=events.length ? `${day}. ${events.map(e=>e.name).join(', ')}` : `${day}`;
+    days+=`<button type="button" class="${classes.join(' ')}" onclick="selectCalendarDay(${year},${month},${day})" aria-label="${label}">${day}</button>`;
+  }
+
+  const selectedEvents=eventsForDate(calendarSelected);
+  const info=selectedEvents.length
+    ? `<div class="calendar-event-list">${selectedEvents.map(e=>`<div class="calendar-event">${e.name}${e.publicHoliday?' — dzień ustawowo wolny':''}</div>`).join('')}</div>`
+    : `<div class="calendar-empty">Na ten dzień nie mamy zaznaczonego dodatkowego święta ani wydarzenia.</div>`;
+
+  const sunday=nextSunday(today);
+  const trading=isTradingSunday(sunday);
+  const nextTrade=trading ? sunday : nextTradingSundayAfter(addDays(sunday,1));
+
+  root.innerHTML=`
+    <div class="calendar-shell">
+      <div class="calendar-head">
+        <button class="calendar-nav-btn" type="button" onclick="changeCalendarMonth(-1)" aria-label="Poprzedni miesiąc">‹</button>
+        <div class="calendar-month">${MONTH_NAMES[month]} ${year}</div>
+        <button class="calendar-nav-btn" type="button" onclick="changeCalendarMonth(1)" aria-label="Następny miesiąc">›</button>
+      </div>
+      <div class="calendar-weekdays" aria-hidden="true">
+        <span>Pn</span><span>Wt</span><span>Śr</span><span>Cz</span><span>Pt</span><span>So</span><span>Nd</span>
+      </div>
+      <div class="calendar-grid">${days}</div>
+
+      <div class="calendar-info">
+        <div class="calendar-info-date">${formatLongDate(calendarSelected)}</div>
+        <div class="calendar-info-title">${sameDay(calendarSelected,today)?'Dzisiaj':'Wybrany dzień'}</div>
+        ${info}
+      </div>
+
+      <div class="trade-card">
+        <div class="trade-eyebrow">Najbliższa niedziela</div>
+        <div class="trade-status">${trading?'Jest handlowa':'Jest niehandlowa'}</div>
+        <div class="trade-date">${formatLongDate(sunday)}</div>
+        ${!trading && nextTrade ? `<div class="trade-next">Najbliższa niedziela handlowa: <strong>${nextTrade.getDate()} ${MONTH_NAMES_GEN[nextTrade.getMonth()]} ${nextTrade.getFullYear()}</strong>.</div>` : ''}
+      </div>
+    </div>`;
+}
+function selectCalendarDay(year,month,day){
+  calendarSelected=new Date(year,month,day);
+  renderCalendar();
+}
+function changeCalendarMonth(delta){
+  calendarCursor=new Date(calendarCursor.getFullYear(),calendarCursor.getMonth()+delta,1);
+  calendarSelected=new Date(calendarCursor.getFullYear(),calendarCursor.getMonth(),1);
+  renderCalendar();
+}
+function switchPanelTab(tab){
+  const search=tab==='search';
+  $('tab-search')?.classList.toggle('active',search);
+  $('tab-calendar')?.classList.toggle('active',!search);
+  $('tab-search')?.setAttribute('aria-selected',String(search));
+  $('tab-calendar')?.setAttribute('aria-selected',String(!search));
+  $('panel-view-search')?.classList.toggle('active',search);
+  $('panel-view-calendar')?.classList.toggle('active',!search);
+  if(!search){
+    const now=new Date();
+    calendarCursor=new Date(now.getFullYear(),now.getMonth(),1);
+    calendarSelected=new Date(now.getFullYear(),now.getMonth(),now.getDate());
+    renderCalendar();
+  }else{
+    setTimeout(()=>$('panel-search-input')?.focus(),50);
+  }
+}
+
 // ── SIDE PANEL SEARCH ─────────────────────────────────────────────────────
 let panelTimeout=null,panelResults=[];
 
 function openPanel(){
   $('side-panel').classList.add('open');
   $('panel-overlay').classList.add('open');
-  setTimeout(()=>{const el=$('panel-search-input');if(el)el.focus();},200);
+  const searchActive=$('panel-view-search')?.classList.contains('active');
+  if(searchActive) setTimeout(()=>{const el=$('panel-search-input');if(el)el.focus();},200);
 }
 function closePanel(){
   $('side-panel').classList.remove('open');
