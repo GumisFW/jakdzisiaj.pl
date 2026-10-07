@@ -4,9 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>JAKDZISIAJ.PL</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root {
   --bg: #f7f7f5;
@@ -24,7 +21,7 @@ html { color-scheme: light; }
 body {
   background: var(--bg);
   color: var(--text);
-  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
   min-height: 100vh;
   padding: 96px clamp(20px,5vw,72px) 56px;
   -webkit-font-smoothing: antialiased;
@@ -138,6 +135,77 @@ button, input { font: inherit; }
 .range-wrap { height:3px; background:var(--soft); border-radius:99px; position:relative; overflow:hidden; }
 .range-fill { position:absolute; top:0; height:100%; background:#222; border-radius:99px; opacity:.65; }
 
+
+/* PRIVACY + START SCREEN */
+.start-screen {
+  max-width: 820px;
+  margin: 6vh auto 0;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: clamp(30px, 5vw, 58px);
+  box-shadow: var(--shadow);
+}
+.start-kicker {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--muted);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  margin-bottom: 18px;
+}
+.start-title {
+  font-size: clamp(42px, 7vw, 82px);
+  line-height: .98;
+  letter-spacing: -.06em;
+  margin-bottom: 20px;
+}
+.start-desc {
+  max-width: 650px;
+  color: var(--muted);
+  font-size: 15px;
+  line-height: 1.75;
+  margin-bottom: 26px;
+}
+.start-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+.privacy-note {
+  max-width: 650px;
+  color: #8a8a86;
+  font-size: 12px;
+  line-height: 1.65;
+}
+.privacy-note a,
+.site-footer a {
+  color: inherit;
+  text-underline-offset: 3px;
+}
+.privacy-note a:hover,
+.site-footer a:hover {
+  color: var(--text);
+}
+.site-footer {
+  max-width: 1500px;
+  margin: 30px auto 0;
+  padding: 0 6px;
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  color: #8d8d89;
+  font-size: 12px;
+  line-height: 1.5;
+}
+.site-footer-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
 @media (max-width: 1050px) {
   .layout { grid-template-columns:1fr 1fr; }
   .col-left { grid-column:1 / -1; min-height:auto; }
@@ -177,7 +245,15 @@ button, input { font: inherit; }
   <div id="panel-selected"></div>
 </div>
 
-<div id="app"><div class="loading">Ładowanie…</div></div>
+<div id="app"></div>
+<footer class="site-footer">
+  <span>© 2026 JAKDZISIAJ.PL</span>
+  <span class="site-footer-links">
+    <a href="privacy.html">Polityka prywatności</a>
+    <span>Dane pogodowe: Open-Meteo</span>
+    <span>Geokodowanie: OpenStreetMap / Nominatim</span>
+  </span>
+</footer>
 
 <script>
 // ── MIN.IMAL LINE ICONS ─────────────────────────────────────────────────────
@@ -359,7 +435,7 @@ function showDenied(errCode){
   const msgs={1:'ZABLOKOWANO DOSTĘP DO LOKALIZACJI.',2:'NIE MOŻNA USTALIĆ POZYCJI.',3:'PRZEKROCZONO CZAS OCZEKIWANIA.'};
   const hint=errCode===1
     ?`ABY ODBLOKOWAĆ: KLIKNIJ IKONKĘ <strong>KŁÓDKI</strong> LUB <strong>"I"</strong><br>W PASKU ADRESU → LOKALIZACJA → ZEZWOL → ODŚWIEŻ STRONĘ.`
-    :`SPRAWDZ CZY PRZEGLĄDARKA MA DOSTĘP DO LOKALIZACJI<br>I SPRÓBUJ PONOWNIE.`;
+    :`SPRAWDŹ CZY PRZEGLĄDARKA MA DOSTĘP DO LOKALIZACJI<br>I SPRÓBUJ PONOWNIE.`;
   set(`
     <div class="denied-screen">
       <div class="denied-tag">JAKDZISIAJ.PL</div>
@@ -492,16 +568,31 @@ async function tryGPS(){
   loadWeather(pos.coords.latitude,pos.coords.longitude,null);
 }
 
-async function init(){
-  if(!navigator.geolocation){showDenied(0);return;}
-  if(navigator.permissions){
-    try{
-      const perm=await navigator.permissions.query({name:'geolocation'});
-      if(perm.state==='denied'){showDenied(1);return;}
-      if(perm.state==='granted'){tryGPS();return;}
-    }catch(_){}
-  }
-  tryGPS();
+function showWelcome(){
+  set(`
+    <section class="start-screen">
+      <div class="start-kicker">JAKDZISIAJ.PL</div>
+      <h1 class="start-title">Jak dzisiaj?</h1>
+      <p class="start-desc">
+        Sprawdź pogodę dla swojej lokalizacji albo wybierz miejscowość ręcznie.
+        Lokalizacja urządzenia zostanie pobrana dopiero po kliknięciu przycisku poniżej.
+      </p>
+      <div class="start-actions">
+        <button class="px-btn" onclick="tryGPS()">Użyj mojej lokalizacji</button>
+        <button class="px-btn ghost" onclick="showCityPicker()">Wybierz miejscowość</button>
+      </div>
+      <p class="privacy-note">
+        Po wybraniu lokalizacji współrzędne są używane do pobrania prognozy z Open-Meteo
+        oraz ustalenia nazwy miejscowości przez Nominatim (OpenStreetMap).
+        Serwis nie zapisuje historii lokalizacji w swojej bazie.
+        Szczegóły znajdziesz w <a href="privacy.html">polityce prywatności</a>.
+      </p>
+    </section>
+  `);
+}
+
+function init(){
+  showWelcome();
 }
 
 init();
