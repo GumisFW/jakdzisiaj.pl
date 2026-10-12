@@ -198,6 +198,100 @@ html[data-theme="dark"] .theme-moon { opacity:1; transform:rotate(0deg) scale(1)
   .calendar-day { border-radius:10px; }
 }
 
+
+/* SŁÓWKO DNIA */
+.panel-nav { grid-template-columns:repeat(3,1fr); }
+
+.wordle-shell {
+  display:flex; flex-direction:column; align-items:center; gap:16px;
+  padding:2px 0 6px;
+}
+.wordle-top { width:100%; text-align:center; }
+.wordle-kicker {
+  color:var(--muted); font-size:10px; font-weight:750;
+  letter-spacing:.09em; text-transform:uppercase; margin-bottom:6px;
+}
+.wordle-title { font-size:28px; font-weight:760; letter-spacing:-.04em; }
+.wordle-subtitle { margin-top:6px; color:var(--muted); font-size:12px; line-height:1.45; }
+.wordle-board {
+  display:grid; grid-template-rows:repeat(6,1fr); gap:6px;
+  width:min(100%,286px);
+}
+.wordle-row { display:grid; grid-template-columns:repeat(5,1fr); gap:6px; }
+.wordle-tile {
+  aspect-ratio:1; border:1.5px solid var(--line); border-radius:10px;
+  background:var(--surface); color:var(--text); display:grid; place-items:center;
+  font-size:24px; font-weight:780; text-transform:uppercase; user-select:none;
+  transition:transform .18s ease, background-color .25s ease, color .25s ease, border-color .25s ease;
+}
+.wordle-tile.filled { border-color:var(--muted); transform:scale(1.02); }
+.wordle-tile.correct { background:#4f7f56; border-color:#4f7f56; color:#fff; }
+.wordle-tile.present { background:#b28a35; border-color:#b28a35; color:#fff; }
+.wordle-tile.absent { background:#777771; border-color:#777771; color:#fff; }
+html[data-theme="dark"] .wordle-tile.absent { background:#3b3b38; border-color:#3b3b38; }
+
+.wordle-message {
+  min-height:20px; width:100%; text-align:center;
+  color:var(--muted); font-size:12px; font-weight:600;
+}
+.wordle-message.strong { color:var(--text); font-size:13px; }
+
+.wordle-keyboard { width:100%; display:flex; flex-direction:column; gap:5px; }
+.wordle-key-row { display:flex; justify-content:center; gap:4px; }
+.wordle-key {
+  min-width:0; height:39px; padding:0 7px; flex:1 1 0;
+  border:0; border-radius:7px; background:var(--soft); color:var(--text);
+  font-size:12px; font-weight:720; cursor:pointer; text-transform:uppercase;
+  transition:transform .12s ease, background-color .2s ease, color .2s ease;
+}
+.wordle-key:hover { transform:translateY(-1px); }
+.wordle-key.wide { flex:1.45 1 0; font-size:10px; }
+.wordle-key.correct { background:#4f7f56; color:#fff; }
+.wordle-key.present { background:#b28a35; color:#fff; }
+.wordle-key.absent { background:#777771; color:#fff; }
+html[data-theme="dark"] .wordle-key.absent { background:#3b3b38; }
+.wordle-polish-row .wordle-key { max-width:42px; }
+
+.wordle-legend {
+  width:100%; border-top:1px solid var(--line); padding-top:14px;
+  color:var(--muted); font-size:11px; line-height:1.5;
+}
+.wordle-legend strong { color:var(--text); }
+.wordle-result {
+  width:100%; padding:14px 16px; border:1px solid var(--line);
+  border-radius:14px; background:var(--soft); text-align:center;
+}
+.wordle-result-title { font-size:17px; font-weight:750; letter-spacing:-.02em; }
+.wordle-result-sub { color:var(--muted); font-size:11px; margin-top:5px; line-height:1.45; }
+
+@keyframes wordle-pop { 50% { transform:scale(1.09); } }
+.wordle-tile.pop { animation:wordle-pop .16s ease; }
+
+@media (max-width:480px) {
+  .panel-tab { padding:9px 5px; font-size:11px; }
+  .wordle-board { width:min(100%,270px); }
+  .wordle-key { height:37px; padding:0 5px; font-size:11px; }
+}
+
+
+.wordle-share-btn {
+  margin-top:10px;
+  width:100%;
+  border:1px solid var(--text);
+  background:var(--text);
+  color:var(--button-text);
+  border-radius:999px;
+  padding:11px 16px;
+  font-size:12px;
+  font-weight:700;
+  cursor:pointer;
+  transition:transform .16s ease, box-shadow .16s ease;
+}
+.wordle-share-btn:hover {
+  transform:translateY(-1px);
+  box-shadow:0 8px 20px rgba(0,0,0,.12);
+}
+
 /* SHARED */
 .label { margin-bottom: 18px; }
 .weather-icon { display:inline-flex; align-items:center; justify-content:center; color:var(--text); flex-shrink:0; }
@@ -396,6 +490,7 @@ html[data-theme="dark"] .theme-moon { opacity:1; transform:rotate(0deg) scale(1)
   <div class="panel-nav" role="tablist" aria-label="Menu">
     <button class="panel-tab active" id="tab-search" type="button" role="tab" aria-selected="true" onclick="switchPanelTab('search')">Miejscowość</button>
     <button class="panel-tab" id="tab-calendar" type="button" role="tab" aria-selected="false" onclick="switchPanelTab('calendar')">Kalendarz</button>
+    <button class="panel-tab" id="tab-wordle" type="button" role="tab" aria-selected="false" onclick="switchPanelTab('wordle')">Słówko</button>
   </div>
 
   <div class="panel-view active" id="panel-view-search" role="tabpanel">
@@ -407,6 +502,10 @@ html[data-theme="dark"] .theme-moon { opacity:1; transform:rotate(0deg) scale(1)
 
   <div class="panel-view" id="panel-view-calendar" role="tabpanel">
     <div id="calendar-panel"></div>
+  </div>
+
+  <div class="panel-view" id="panel-view-wordle" role="tabpanel">
+    <div id="wordle-panel"></div>
   </div>
 </div>
 
@@ -907,22 +1006,281 @@ function changeCalendarMonth(delta){
   renderCalendar();
 }
 function switchPanelTab(tab){
-  const search=tab==='search';
-  $('tab-search')?.classList.toggle('active',search);
-  $('tab-calendar')?.classList.toggle('active',!search);
-  $('tab-search')?.setAttribute('aria-selected',String(search));
-  $('tab-calendar')?.setAttribute('aria-selected',String(!search));
-  $('panel-view-search')?.classList.toggle('active',search);
-  $('panel-view-calendar')?.classList.toggle('active',!search);
-  if(!search){
+  const tabs=['search','calendar','wordle'];
+  tabs.forEach(name=>{
+    const active=tab===name;
+    $(`tab-${name}`)?.classList.toggle('active',active);
+    $(`tab-${name}`)?.setAttribute('aria-selected',String(active));
+    $(`panel-view-${name}`)?.classList.toggle('active',active);
+  });
+
+  if(tab==='calendar'){
     const now=new Date();
     calendarCursor=new Date(now.getFullYear(),now.getMonth(),1);
     calendarSelected=new Date(now.getFullYear(),now.getMonth(),now.getDate());
     renderCalendar();
-  }else{
+  }else if(tab==='wordle'){
+    loadWordleState();
+    renderWordle();
+  }else if(tab==='search'){
     setTimeout(()=>$('panel-search-input')?.focus(),50);
   }
 }
+
+
+// ── SŁÓWKO DNIA ───────────────────────────────────────────────────────────
+const WORDLE_ANSWERS = ["alarm", "arbuz", "balon", "banan", "baran", "bilet", "blask", "brama", "brzeg", "cegła", "cisza", "czapa", "deska", "drzwi", "dynia", "dźwig", "ekran", "farba", "fotel", "głowa", "gracz", "grupa", "gumka", "hałas", "hotel", "jajko", "kabel", "kakao", "karta", "katar", "kawał", "kibic", "klasa", "klucz", "kocur", "kolor", "konto", "kreda", "kwiat", "laser", "lampa", "leśny", "lisek", "łyżka", "magia", "masło", "mleko", "morze", "motor", "niebo", "obiad", "obraz", "ogród", "opona", "palec", "panel", "peron", "pizza", "pokój", "praca", "radio", "rzeka", "serce", "sklep", "słoik", "słowo", "sport", "szafa", "szary", "szkło", "szlak", "tango", "teren", "torba", "trawa", "ulica", "wagon", "wiatr", "wideo", "zamek", "zegar", "złoto", "żabka", "żarty", "aktor", "adres", "akord", "album", "anioł", "arena", "atlas", "autor", "awans", "babka", "bajka", "bańka", "bęben", "biuro", "bluza", "błoto", "bonus", "burza", "cecha", "celny", "cenny", "cichy", "cudny", "cyfra", "dętka", "długi", "drama", "dusza", "dywan", "fajny", "farsa", "finał", "firma", "fobia", "gadka", "galop", "garść", "gęsty", "gmina", "górka", "górny", "groch", "gruby", "grunt", "guzik", "jacht", "jeans", "język", "kadra", "kajak", "kamyk", "kanał", "karma", "kebab", "kiedy", "kijek", "kiosk", "kobra", "koala", "korek", "kotek", "krata", "krowa", "krzak", "kurka", "kwota", "lalka", "lasek", "lekki", "lilia", "linia", "lista", "lokal", "łaska", "łóżko", "marka", "maska", "mebel", "metal", "miara", "mięso", "miska", "mocny", "model", "młody", "narty", "nauka", "nerka", "nisko", "norma", "numer", "obłok", "ocean", "oczko", "ogień", "okres", "oliwa", "opera", "orkan", "panda", "panna", "pasek", "pasta", "patyk", "perła", "piana", "pilot", "piłka", "pióro", "płaca", "płacz", "płuca", "poeta", "pomoc", "pompa", "powód", "ptaki", "punkt", "robot", "rondo", "rower", "różny", "rynek", "sanki", "senny", "seria", "siano", "skala", "skarb", "skóra", "smuga", "sosna", "sroka", "stado", "stary", "sufit", "sushi", "sznur", "tarka", "teatr", "tekst", "tempo", "tętno", "toast", "trasa", "twarz", "ugoda", "urlop", "wafel", "walka", "wanna", "wąski", "wazon", "wełna", "winda", "worek", "wózek", "wyraz", "wyspa", "zając", "zakup", "zapas", "zawór", "zboże", "zebra", "zgoda", "zjawa", "złość", "żeton", "żmija", "żurek"];
+const WORDLE_ROWS = 6;
+const WORDLE_COLS = 5;
+const WORDLE_LETTERS = /^[A-ZĄĆĘŁŃÓŚŹŻ]$/u;
+let wordleState = null;
+
+function polandDateKey(){
+  const parts = new Intl.DateTimeFormat('en-CA', {
+    timeZone:'Europe/Warsaw', year:'numeric', month:'2-digit', day:'2-digit'
+  }).formatToParts(new Date());
+  const get=t=>parts.find(p=>p.type===t)?.value;
+  return `${get('year')}-${get('month')}-${get('day')}`;
+}
+function wordleDayNumber(key){
+  const [y,m,d]=key.split('-').map(Number);
+  const start=Date.UTC(2026,9,12);
+  const now=Date.UTC(y,m-1,d);
+  return Math.floor((now-start)/86400000)+1;
+}
+function dailyWord(key){
+  let h=2166136261;
+  for(const ch of key){
+    h ^= ch.codePointAt(0);
+    h = Math.imul(h,16777619);
+  }
+  return WORDLE_ANSWERS[(h>>>0)%WORDLE_ANSWERS.length].toUpperCase();
+}
+function wordleStorageKey(){
+  return `jakdzisiaj-slowko-${polandDateKey()}`;
+}
+function emptyWordleState(){
+  return {date:polandDateKey(),guesses:[],current:'',finished:false,won:false};
+}
+function loadWordleState(){
+  const key=wordleStorageKey();
+  try{
+    const saved=JSON.parse(localStorage.getItem(key)||'null');
+    if(saved && saved.date===polandDateKey() && Array.isArray(saved.guesses)){
+      wordleState={
+        date:saved.date,
+        guesses:saved.guesses.slice(0,WORDLE_ROWS),
+        current:'',
+        finished:Boolean(saved.finished),
+        won:Boolean(saved.won)
+      };
+      return;
+    }
+  }catch(_ ){}
+  wordleState=emptyWordleState();
+}
+function saveWordleState(){
+  if(!wordleState)return;
+  try{
+    localStorage.setItem(wordleStorageKey(),JSON.stringify({
+      date:wordleState.date,
+      guesses:wordleState.guesses,
+      finished:wordleState.finished,
+      won:wordleState.won
+    }));
+  }catch(_ ){}
+}
+function evaluateWordleGuess(guess,answer){
+  const g=[...guess],a=[...answer],result=Array(WORDLE_COLS).fill('absent');
+  const remaining={};
+  for(let i=0;i<WORDLE_COLS;i++){
+    if(g[i]===a[i]) result[i]='correct';
+    else remaining[a[i]]=(remaining[a[i]]||0)+1;
+  }
+  for(let i=0;i<WORDLE_COLS;i++){
+    if(result[i]==='correct') continue;
+    if((remaining[g[i]]||0)>0){
+      result[i]='present';
+      remaining[g[i]]--;
+    }
+  }
+  return result;
+}
+function wordleKeyboardState(){
+  const answer=dailyWord(wordleState.date);
+  const rank={absent:1,present:2,correct:3},state={};
+  wordleState.guesses.forEach(guess=>{
+    const result=evaluateWordleGuess(guess,answer);
+    [...guess].forEach((ch,i)=>{
+      const next=result[i];
+      if(!state[ch] || rank[next]>rank[state[ch]]) state[ch]=next;
+    });
+  });
+  return state;
+}
+function wordleKeyHtml(label,value,wide=false){
+  const kstate=wordleKeyboardState();
+  const cls=kstate[value] ? ` ${kstate[value]}` : '';
+  return `<button type="button" class="wordle-key${wide?' wide':''}${cls}" onclick="wordlePress('${value}')">${label}</button>`;
+}
+
+function wordleShareText(){
+  if(!wordleState?.finished) return '';
+  const answer=dailyWord(wordleState.date);
+  const rows=wordleState.guesses.map(guess=>{
+    return evaluateWordleGuess(guess,answer).map(state=>{
+      if(state==='correct') return '🟩';
+      if(state==='present') return '🟨';
+      return '⬜';
+    }).join('');
+  }).join('\n');
+  const result=wordleState.won ? `${wordleState.guesses.length}/6` : 'X/6';
+  const day=wordleDayNumber(wordleState.date);
+  return `jakdzisiaj.pl — Słówko${day>0?` #${day}`:''} ${result}\n\n${rows}\n\nhttps://jakdzisiaj.pl`;
+}
+
+async function shareWordleResult(){
+  const text=wordleShareText();
+  if(!text)return;
+
+  try{
+    if(navigator.share){
+      await navigator.share({text});
+      return;
+    }
+  }catch(e){
+    if(e?.name==='AbortError') return;
+  }
+
+  try{
+    await navigator.clipboard.writeText(text);
+    wordleFlashMessage('Wynik skopiowany do schowka.');
+  }catch(_){
+    const ta=document.createElement('textarea');
+    ta.value=text;
+    ta.style.position='fixed';
+    ta.style.opacity='0';
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    ta.remove();
+    wordleFlashMessage('Wynik skopiowany do schowka.');
+  }
+}
+
+function renderWordle(){
+  const root=$('wordle-panel'); if(!root)return;
+  if(!wordleState || wordleState.date!==polandDateKey()) loadWordleState();
+  const answer=dailyWord(wordleState.date);
+
+  let board='';
+  for(let r=0;r<WORDLE_ROWS;r++){
+    const submitted=wordleState.guesses[r];
+    const current=!submitted && r===wordleState.guesses.length ? wordleState.current : '';
+    const letters=[...(submitted||current||'')];
+    const result=submitted ? evaluateWordleGuess(submitted,answer) : [];
+    let tiles='';
+    for(let c=0;c<WORDLE_COLS;c++){
+      const letter=letters[c]||'';
+      const state=submitted ? ` ${result[c]}` : letter ? ' filled' : '';
+      tiles+=`<div class="wordle-tile${state}" id="wordle-tile-${r}-${c}">${letter}</div>`;
+    }
+    board+=`<div class="wordle-row">${tiles}</div>`;
+  }
+
+  const row1=[...'QWERTYUIOP'].map(k=>wordleKeyHtml(k,k)).join('');
+  const row2=[...'ASDFGHJKL'].map(k=>wordleKeyHtml(k,k)).join('');
+  const row3=[...'ZXCVBNM'].map(k=>wordleKeyHtml(k,k)).join('');
+  const polish=['Ą','Ć','Ę','Ł','Ń','Ó','Ś','Ź','Ż'].map(k=>wordleKeyHtml(k,k)).join('');
+
+  let message='Masz 6 prób. Zielone = dobra litera i miejsce.';
+  let result='';
+  if(wordleState.finished){
+    if(wordleState.won){
+      const tries=wordleState.guesses.length;
+      result=`<div class="wordle-result"><div class="wordle-result-title">Brawo — ${answer} 🎉</div><div class="wordle-result-sub">Udało się w ${tries} próbie/próbach. Jutro pojawi się nowe słowo.</div><button type="button" class="wordle-share-btn" onclick="shareWordleResult()">Udostępnij wynik</button></div>`;
+      message='Dzisiejsze słówko rozwiązane.';
+    }else{
+      result=`<div class="wordle-result"><div class="wordle-result-title">Dzisiaj: ${answer}</div><div class="wordle-result-sub">Nie tym razem. Jutro czeka kolejne słowo.</div><button type="button" class="wordle-share-btn" onclick="shareWordleResult()">Udostępnij wynik</button></div>`;
+      message='Wykorzystano wszystkie próby.';
+    }
+  }
+
+  const day=wordleDayNumber(wordleState.date);
+  root.innerHTML=`
+    <div class="wordle-shell">
+      <div class="wordle-top">
+        <div class="wordle-kicker">Gra dnia${day>0?` · #${day}`:''}</div>
+        <div class="wordle-title">Słówko</div>
+        <div class="wordle-subtitle">Odgadnij polskie słowo na 5 liter.</div>
+      </div>
+      <div class="wordle-board" aria-label="Plansza gry">${board}</div>
+      <div class="wordle-message${wordleState.finished?' strong':''}" id="wordle-message">${message}</div>
+      ${result}
+      <div class="wordle-keyboard" aria-label="Klawiatura ekranowa">
+        <div class="wordle-key-row">${row1}</div>
+        <div class="wordle-key-row">${row2}</div>
+        <div class="wordle-key-row">${wordleKeyHtml('ENTER','ENTER',true)}${row3}${wordleKeyHtml('⌫','BACKSPACE',true)}</div>
+        <div class="wordle-key-row wordle-polish-row">${polish}</div>
+      </div>
+      <div class="wordle-legend">
+        Słówko zmienia się codziennie o północy czasu polskiego.
+        Postęp jest zapisywany <strong>tylko lokalnie w tej przeglądarce</strong>.
+      </div>
+    </div>`;
+}
+function wordleFlashMessage(text){
+  const el=$('wordle-message'); if(!el)return;
+  const old=el.textContent;
+  el.textContent=text; el.classList.add('strong');
+  setTimeout(()=>{
+    if(el && !wordleState.finished){
+      el.textContent=old; el.classList.remove('strong');
+    }
+  },1200);
+}
+function wordlePress(key){
+  if(!wordleState) loadWordleState();
+  if(wordleState.finished) return;
+
+  if(key==='BACKSPACE'){
+    wordleState.current=[...wordleState.current].slice(0,-1).join('');
+    renderWordle(); return;
+  }
+  if(key==='ENTER'){
+    const guess=wordleState.current.toUpperCase();
+    if([...guess].length!==WORDLE_COLS){
+      wordleFlashMessage('Wpisz 5 liter.'); return;
+    }
+    wordleState.guesses.push(guess);
+    wordleState.current='';
+    const answer=dailyWord(wordleState.date);
+    if(guess===answer){wordleState.finished=true;wordleState.won=true;}
+    else if(wordleState.guesses.length>=WORDLE_ROWS){wordleState.finished=true;wordleState.won=false;}
+    saveWordleState();
+    renderWordle();
+    return;
+  }
+
+  const ch=String(key||'').toUpperCase();
+  if(WORDLE_LETTERS.test(ch) && [...wordleState.current].length<WORDLE_COLS){
+    wordleState.current+=ch;
+    renderWordle();
+    const r=wordleState.guesses.length,c=[...wordleState.current].length-1;
+    const tile=$(`wordle-tile-${r}-${c}`);
+    if(tile){tile.classList.add('pop');setTimeout(()=>tile.classList.remove('pop'),170);}
+  }
+}
+document.addEventListener('keydown',e=>{
+  const active=$('panel-view-wordle')?.classList.contains('active');
+  const open=$('side-panel')?.classList.contains('open');
+  if(!active || !open || e.target?.matches?.('input,textarea')) return;
+  if(e.key==='Enter'){e.preventDefault();wordlePress('ENTER');return;}
+  if(e.key==='Backspace'){e.preventDefault();wordlePress('BACKSPACE');return;}
+  const ch=String(e.key||'').toUpperCase();
+  if(WORDLE_LETTERS.test(ch)){e.preventDefault();wordlePress(ch);}
+});
+
 
 // ── SIDE PANEL SEARCH ─────────────────────────────────────────────────────
 let panelTimeout=null,panelResults=[];
