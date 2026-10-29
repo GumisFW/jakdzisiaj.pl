@@ -62,7 +62,7 @@ button, input { font: inherit; }
 .ham-btn:hover { transform: translateY(-1px); }
 
 .theme-btn {
-  position: fixed; top: 24px; right: 24px; z-index: 1100;
+  position: fixed; top: 24px; left: 78px; z-index: 1100;
   width: 46px; height: 46px; border-radius: 50%;
   border: 1px solid var(--line); background: var(--floating); color: var(--text);
   box-shadow: 0 6px 24px rgba(0,0,0,.05); backdrop-filter: blur(14px);
@@ -200,7 +200,7 @@ html[data-theme="dark"] .theme-moon { opacity:1; transform:rotate(0deg) scale(1)
 
 
 /* SŁÓWKO DNIA */
-.panel-nav { grid-template-columns:repeat(3,1fr); }
+.panel-nav { grid-template-columns:repeat(2,1fr); }
 
 .wordle-shell {
   display:flex; flex-direction:column; align-items:center; gap:16px;
@@ -290,6 +290,103 @@ html[data-theme="dark"] .wordle-key.absent { background:#3b3b38; }
 .wordle-share-btn:hover {
   transform:translateY(-1px);
   box-shadow:0 8px 20px rgba(0,0,0,.12);
+}
+
+
+/* SUDOKU DNIA */
+.sudoku-shell {
+  display:flex; flex-direction:column; align-items:center; gap:15px;
+  padding:2px 0 8px;
+}
+.sudoku-top { width:100%; text-align:center; }
+.sudoku-kicker {
+  color:var(--muted); font-size:10px; font-weight:750;
+  letter-spacing:.09em; text-transform:uppercase; margin-bottom:6px;
+}
+.sudoku-title { font-size:28px; font-weight:760; letter-spacing:-.04em; }
+.sudoku-subtitle {
+  margin-top:6px; color:var(--muted); font-size:12px; line-height:1.45;
+}
+.sudoku-stats {
+  width:min(100%,340px); display:flex; align-items:center; justify-content:space-between;
+  color:var(--muted); font-size:11px; font-variant-numeric:tabular-nums;
+}
+.sudoku-board {
+  width:min(100%,340px);
+  aspect-ratio:1;
+  display:grid; grid-template-columns:repeat(9,1fr); grid-template-rows:repeat(9,1fr);
+  border:2px solid var(--text); border-radius:12px; overflow:hidden;
+  background:var(--line);
+}
+.sudoku-cell {
+  position:relative; min-width:0; border:0;
+  border-right:1px solid var(--line); border-bottom:1px solid var(--line);
+  background:var(--surface); color:var(--text);
+  display:grid; place-items:center;
+  font-size:clamp(14px,4.5vw,19px); font-weight:620;
+  cursor:pointer; user-select:none; padding:0;
+  transition:background-color .12s ease,color .12s ease;
+}
+.sudoku-cell:nth-child(9n) { border-right:0; }
+.sudoku-cell:nth-child(n+73) { border-bottom:0; }
+.sudoku-cell.box-right { border-right:2px solid var(--text); }
+.sudoku-cell.box-bottom { border-bottom:2px solid var(--text); }
+.sudoku-cell.given { font-weight:800; cursor:default; }
+.sudoku-cell.user-value { color:#426aa6; }
+html[data-theme="dark"] .sudoku-cell.user-value { color:#8eb4ed; }
+.sudoku-cell.related { background:var(--soft); }
+.sudoku-cell.same-number { background:color-mix(in srgb, var(--soft) 58%, var(--text) 7%); }
+.sudoku-cell.selected {
+  background:color-mix(in srgb, var(--surface) 76%, #6f91c7 24%);
+  box-shadow:inset 0 0 0 2px #6f91c7;
+  z-index:2;
+}
+html[data-theme="dark"] .sudoku-cell.selected {
+  background:color-mix(in srgb, var(--surface) 70%, #557db7 30%);
+}
+.sudoku-cell.conflict { color:#b44d4d; background:#fae9e7; }
+html[data-theme="dark"] .sudoku-cell.conflict { color:#ff9c94; background:#3b2020; }
+
+.sudoku-pad {
+  width:min(100%,340px);
+  display:grid; grid-template-columns:repeat(9,1fr); gap:5px;
+}
+.sudoku-num {
+  aspect-ratio:1; min-width:0; border:1px solid var(--line);
+  border-radius:9px; background:var(--soft); color:var(--text);
+  font-size:15px; font-weight:720; cursor:pointer;
+  transition:transform .12s ease,background-color .15s ease;
+}
+.sudoku-num:hover { transform:translateY(-1px); background:var(--surface); }
+.sudoku-actions {
+  width:min(100%,340px); display:grid; grid-template-columns:1fr 1fr; gap:7px;
+}
+.sudoku-action {
+  border:1px solid var(--line); background:var(--surface); color:var(--text);
+  border-radius:999px; padding:10px 12px; font-size:11px; font-weight:700;
+  cursor:pointer;
+}
+.sudoku-action:hover { background:var(--soft); }
+.sudoku-message {
+  min-height:18px; width:100%; text-align:center;
+  color:var(--muted); font-size:11px; line-height:1.45;
+}
+.sudoku-result {
+  width:100%; padding:14px 16px; border:1px solid var(--line);
+  border-radius:14px; background:var(--soft); text-align:center;
+}
+.sudoku-result-title { font-size:17px; font-weight:760; letter-spacing:-.02em; }
+.sudoku-result-sub { color:var(--muted); font-size:11px; margin-top:5px; line-height:1.45; }
+.sudoku-legend {
+  width:100%; border-top:1px solid var(--line); padding-top:14px;
+  color:var(--muted); font-size:11px; line-height:1.5;
+}
+.sudoku-legend strong { color:var(--text); }
+
+@media (max-width:480px) {
+  .sudoku-board, .sudoku-pad, .sudoku-actions { width:min(100%,315px); }
+  .sudoku-cell { font-size:16px; }
+  .sudoku-num { border-radius:7px; font-size:14px; }
 }
 
 /* SHARED */
@@ -449,7 +546,7 @@ html[data-theme="dark"] .wordle-key.absent { background:#3b3b38; }
 @media (max-width: 700px) {
   body { padding:82px 14px 28px; }
   .ham-btn { top:16px; left:14px; }
-  .theme-btn { top:16px; right:14px; }
+  .theme-btn { top:16px; left:68px; right:auto; }
   .clock { top:27px; right:16px; }
   .layout { grid-template-columns:1fr; gap:14px; }
   .col-left, .col-mid, .col-right { padding:22px; border-radius:20px; }
@@ -491,6 +588,7 @@ html[data-theme="dark"] .wordle-key.absent { background:#3b3b38; }
     <button class="panel-tab active" id="tab-search" type="button" role="tab" aria-selected="true" onclick="switchPanelTab('search')">Miejscowość</button>
     <button class="panel-tab" id="tab-calendar" type="button" role="tab" aria-selected="false" onclick="switchPanelTab('calendar')">Kalendarz</button>
     <button class="panel-tab" id="tab-wordle" type="button" role="tab" aria-selected="false" onclick="switchPanelTab('wordle')">Słówko</button>
+    <button class="panel-tab" id="tab-sudoku" type="button" role="tab" aria-selected="false" onclick="switchPanelTab('sudoku')">Sudoku</button>
   </div>
 
   <div class="panel-view active" id="panel-view-search" role="tabpanel">
@@ -506,6 +604,10 @@ html[data-theme="dark"] .wordle-key.absent { background:#3b3b38; }
 
   <div class="panel-view" id="panel-view-wordle" role="tabpanel">
     <div id="wordle-panel"></div>
+  </div>
+
+  <div class="panel-view" id="panel-view-sudoku" role="tabpanel">
+    <div id="sudoku-panel"></div>
   </div>
 </div>
 
@@ -1006,7 +1108,7 @@ function changeCalendarMonth(delta){
   renderCalendar();
 }
 function switchPanelTab(tab){
-  const tabs=['search','calendar','wordle'];
+  const tabs=['search','calendar','wordle','sudoku'];
   tabs.forEach(name=>{
     const active=tab===name;
     $(`tab-${name}`)?.classList.toggle('active',active);
@@ -1022,8 +1124,15 @@ function switchPanelTab(tab){
   }else if(tab==='wordle'){
     loadWordleState();
     renderWordle();
+  }else if(tab==='sudoku'){
+    loadSudokuState();
+    renderSudoku();
+    startSudokuClock();
   }else if(tab==='search'){
+    stopSudokuClock();
     setTimeout(()=>$('panel-search-input')?.focus(),50);
+  }else{
+    stopSudokuClock();
   }
 }
 
@@ -1282,6 +1391,365 @@ document.addEventListener('keydown',e=>{
 });
 
 
+
+// ── SUDOKU DNIA ───────────────────────────────────────────────────────────
+// Klasyczna plansza o jednym rozwiązaniu. Codzienny wariant powstaje przez
+// deterministyczne przetasowanie cyfr, pasów, stosów, wierszy i kolumn.
+// Takie transformacje zachowują jednoznaczność łamigłówki.
+const SUDOKU_BASE_PUZZLE =
+  '530070000' +
+  '600195000' +
+  '098000060' +
+  '800060003' +
+  '400803001' +
+  '700020006' +
+  '060000280' +
+  '000419005' +
+  '000080079';
+
+const SUDOKU_BASE_SOLUTION =
+  '534678912' +
+  '672195348' +
+  '198342567' +
+  '859761423' +
+  '426853791' +
+  '713924856' +
+  '961537284' +
+  '287419635' +
+  '345286179';
+
+let sudokuState=null;
+let sudokuTimer=null;
+
+function seededRng(seedText){
+  let h=2166136261;
+  for(const ch of seedText){
+    h ^= ch.codePointAt(0);
+    h=Math.imul(h,16777619);
+  }
+  let state=h>>>0;
+  return ()=>{
+    state += 0x6D2B79F5;
+    let t=state;
+    t=Math.imul(t^(t>>>15),t|1);
+    t^=t+Math.imul(t^(t>>>7),t|61);
+    return ((t^(t>>>14))>>>0)/4294967296;
+  };
+}
+function seededShuffle(arr,rng){
+  const a=[...arr];
+  for(let i=a.length-1;i>0;i--){
+    const j=Math.floor(rng()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+function sudokuDailyData(dateKeyStr){
+  const rng=seededRng(`jakdzisiaj-sudoku-${dateKeyStr}`);
+
+  // mapowanie cyfr
+  const digits=seededShuffle([1,2,3,4,5,6,7,8,9],rng);
+  const digitMap={};
+  for(let i=1;i<=9;i++) digitMap[i]=digits[i-1];
+
+  // zachowujące bloki przetasowania wierszy i kolumn
+  const bandOrder=seededShuffle([0,1,2],rng);
+  const stackOrder=seededShuffle([0,1,2],rng);
+  const rowOrder=[];
+  const colOrder=[];
+  bandOrder.forEach(b=>{
+    seededShuffle([0,1,2],rng).forEach(r=>rowOrder.push(b*3+r));
+  });
+  stackOrder.forEach(s=>{
+    seededShuffle([0,1,2],rng).forEach(c=>colOrder.push(s*3+c));
+  });
+
+  const transpose=rng()>.5;
+  const transform=(source)=>{
+    const out=Array(81).fill('0');
+    for(let nr=0;nr<9;nr++){
+      for(let nc=0;nc<9;nc++){
+        let or=rowOrder[nr], oc=colOrder[nc];
+        if(transpose) [or,oc]=[oc,or];
+        const value=source[or*9+oc];
+        out[nr*9+nc]=value==='0'?'0':String(digitMap[Number(value)]);
+      }
+    }
+    return out;
+  };
+
+  return {
+    puzzle:transform(SUDOKU_BASE_PUZZLE),
+    solution:transform(SUDOKU_BASE_SOLUTION)
+  };
+}
+function sudokuStorageKey(){
+  return `jakdzisiaj-sudoku-${polandDateKey()}`;
+}
+function sudokuDayNumber(){
+  const [y,m,d]=polandDateKey().split('-').map(Number);
+  const start=Date.UTC(2026,9,29);
+  const now=Date.UTC(y,m-1,d);
+  return Math.floor((now-start)/86400000)+1;
+}
+function emptySudokuState(){
+  const date=polandDateKey();
+  const daily=sudokuDailyData(date);
+  return {
+    date,
+    puzzle:daily.puzzle.join(''),
+    solution:daily.solution.join(''),
+    values:daily.puzzle.map(v=>v==='0'?'':v),
+    selected:null,
+    startedAt:Date.now(),
+    elapsedBefore:0,
+    finished:false,
+    completedAt:null
+  };
+}
+function loadSudokuState(){
+  const date=polandDateKey();
+  try{
+    const saved=JSON.parse(localStorage.getItem(sudokuStorageKey())||'null');
+    if(saved && saved.date===date && Array.isArray(saved.values) && saved.values.length===81){
+      const daily=sudokuDailyData(date);
+      sudokuState={
+        date,
+        puzzle:daily.puzzle.join(''),
+        solution:daily.solution.join(''),
+        values:saved.values.map(v=>String(v||'')),
+        selected:Number.isInteger(saved.selected)?saved.selected:null,
+        startedAt:saved.finished?null:Date.now(),
+        elapsedBefore:Number(saved.elapsedMs)||0,
+        finished:Boolean(saved.finished),
+        completedAt:saved.completedAt||null
+      };
+      return;
+    }
+  }catch(_){}
+  sudokuState=emptySudokuState();
+}
+function sudokuElapsedMs(){
+  if(!sudokuState)return 0;
+  if(sudokuState.finished) return sudokuState.elapsedBefore||0;
+  return (sudokuState.elapsedBefore||0)+(sudokuState.startedAt?Date.now()-sudokuState.startedAt:0);
+}
+function saveSudokuState(){
+  if(!sudokuState)return;
+  try{
+    localStorage.setItem(sudokuStorageKey(),JSON.stringify({
+      date:sudokuState.date,
+      values:sudokuState.values,
+      selected:sudokuState.selected,
+      elapsedMs:sudokuElapsedMs(),
+      finished:sudokuState.finished,
+      completedAt:sudokuState.completedAt
+    }));
+  }catch(_){}
+}
+function sudokuFormatTime(ms){
+  const sec=Math.max(0,Math.floor(ms/1000));
+  const m=Math.floor(sec/60),s=sec%60;
+  return `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+}
+function sudokuGiven(index){
+  return sudokuState?.puzzle?.[index] && sudokuState.puzzle[index]!=='0';
+}
+function sudokuConflict(index){
+  if(!sudokuState)return false;
+  const value=sudokuState.values[index];
+  if(!value)return false;
+  const row=Math.floor(index/9),col=index%9;
+  for(let i=0;i<9;i++){
+    const ri=row*9+i,ci=i*9+col;
+    if(ri!==index && sudokuState.values[ri]===value)return true;
+    if(ci!==index && sudokuState.values[ci]===value)return true;
+  }
+  const br=Math.floor(row/3)*3,bc=Math.floor(col/3)*3;
+  for(let r=br;r<br+3;r++)for(let c=bc;c<bc+3;c++){
+    const j=r*9+c;
+    if(j!==index && sudokuState.values[j]===value)return true;
+  }
+  return false;
+}
+function sudokuIsRelated(a,b){
+  if(a==null||b==null)return false;
+  const ar=Math.floor(a/9),ac=a%9,br=Math.floor(b/9),bc=b%9;
+  return ar===br || ac===bc || (Math.floor(ar/3)===Math.floor(br/3) && Math.floor(ac/3)===Math.floor(bc/3));
+}
+function sudokuIsSolved(){
+  if(!sudokuState || sudokuState.values.some(v=>!v))return false;
+  return sudokuState.values.join('')===sudokuState.solution;
+}
+function selectSudokuCell(index){
+  if(!sudokuState || sudokuState.finished)return;
+  sudokuState.selected=index;
+  saveSudokuState();
+  renderSudoku();
+}
+function sudokuEnter(value){
+  if(!sudokuState || sudokuState.finished || sudokuState.selected==null)return;
+  const i=sudokuState.selected;
+  if(sudokuGiven(i))return;
+  sudokuState.values[i]=value?String(value):'';
+
+  if(sudokuIsSolved()){
+    const elapsed=sudokuElapsedMs();
+    sudokuState.elapsedBefore=elapsed;
+    sudokuState.startedAt=null;
+    sudokuState.finished=true;
+    sudokuState.completedAt=new Date().toISOString();
+    stopSudokuClock();
+  }
+  saveSudokuState();
+  renderSudoku();
+}
+function sudokuClearSelected(){
+  sudokuEnter('');
+}
+function sudokuReset(){
+  if(!sudokuState)return;
+  const daily=sudokuDailyData(polandDateKey());
+  sudokuState={
+    date:polandDateKey(),
+    puzzle:daily.puzzle.join(''),
+    solution:daily.solution.join(''),
+    values:daily.puzzle.map(v=>v==='0'?'':v),
+    selected:null,
+    startedAt:Date.now(),
+    elapsedBefore:0,
+    finished:false,
+    completedAt:null
+  };
+  saveSudokuState();
+  renderSudoku();
+  startSudokuClock();
+}
+function sudokuShareText(){
+  if(!sudokuState?.finished)return '';
+  const day=sudokuDayNumber();
+  return `jakdzisiaj.pl — Sudoku${day>0?` #${day}`:''} ✅\n⏱ ${sudokuFormatTime(sudokuElapsedMs())}\n\nhttps://jakdzisiaj.pl`;
+}
+async function shareSudokuResult(){
+  const text=sudokuShareText(); if(!text)return;
+  try{
+    if(navigator.share){await navigator.share({text});return;}
+  }catch(e){if(e?.name==='AbortError')return;}
+  try{
+    await navigator.clipboard.writeText(text);
+    sudokuMessage('Wynik skopiowany do schowka.');
+  }catch(_){
+    const ta=document.createElement('textarea');
+    ta.value=text;ta.style.position='fixed';ta.style.opacity='0';
+    document.body.appendChild(ta);ta.select();document.execCommand('copy');ta.remove();
+    sudokuMessage('Wynik skopiowany do schowka.');
+  }
+}
+function sudokuMessage(text){
+  const el=$('sudoku-message');
+  if(!el)return;
+  const old=el.textContent;
+  el.textContent=text;
+  setTimeout(()=>{if(el && !sudokuState?.finished)el.textContent=old;},1300);
+}
+function renderSudoku(){
+  const root=$('sudoku-panel');if(!root)return;
+  if(!sudokuState || sudokuState.date!==polandDateKey())loadSudokuState();
+
+  const selected=sudokuState.selected;
+  const selectedValue=selected!=null?sudokuState.values[selected]:'';
+  let cells='';
+
+  for(let i=0;i<81;i++){
+    const r=Math.floor(i/9),c=i%9,value=sudokuState.values[i]||'';
+    const classes=['sudoku-cell'];
+    if(sudokuGiven(i))classes.push('given');
+    else if(value)classes.push('user-value');
+    if(c===2||c===5)classes.push('box-right');
+    if(r===2||r===5)classes.push('box-bottom');
+    if(selected===i)classes.push('selected');
+    else if(selected!=null && sudokuIsRelated(selected,i))classes.push('related');
+    if(selectedValue && value===selectedValue)classes.push('same-number');
+    if(value && sudokuConflict(i))classes.push('conflict');
+
+    cells+=`<button type="button" class="${classes.join(' ')}" onclick="selectSudokuCell(${i})" aria-label="Wiersz ${r+1}, kolumna ${c+1}${value?`, wartość ${value}`:', puste'}">${value}</button>`;
+  }
+
+  const nums=[1,2,3,4,5,6,7,8,9].map(n=>`<button type="button" class="sudoku-num" onclick="sudokuEnter(${n})">${n}</button>`).join('');
+  const day=sudokuDayNumber();
+  const filled=sudokuState.values.filter(Boolean).length;
+  const editableFilled=sudokuState.values.filter((v,i)=>v && !sudokuGiven(i)).length;
+
+  let result='';
+  if(sudokuState.finished){
+    result=`<div class="sudoku-result">
+      <div class="sudoku-result-title">Sudoku rozwiązane 🎉</div>
+      <div class="sudoku-result-sub">Czas: ${sudokuFormatTime(sudokuElapsedMs())}. Jutro pojawi się nowa plansza.</div>
+      <button type="button" class="wordle-share-btn" onclick="shareSudokuResult()">Udostępnij wynik</button>
+    </div>`;
+  }
+
+  root.innerHTML=`
+    <div class="sudoku-shell">
+      <div class="sudoku-top">
+        <div class="sudoku-kicker">Gra dnia${day>0?` · #${day}`:''}</div>
+        <div class="sudoku-title">Sudoku</div>
+        <div class="sudoku-subtitle">Jedna plansza dziennie. Uzupełnij cyfry 1–9.</div>
+      </div>
+
+      <div class="sudoku-stats">
+        <span>Postęp: ${editableFilled} wpisanych</span>
+        <span id="sudoku-clock">${sudokuFormatTime(sudokuElapsedMs())}</span>
+      </div>
+
+      <div class="sudoku-board" aria-label="Plansza Sudoku">${cells}</div>
+
+      <div class="sudoku-pad">${nums}</div>
+
+      <div class="sudoku-actions">
+        <button type="button" class="sudoku-action" onclick="sudokuClearSelected()">Wyczyść pole</button>
+        <button type="button" class="sudoku-action" onclick="sudokuReset()">Zacznij od nowa</button>
+      </div>
+
+      <div class="sudoku-message" id="sudoku-message">${sudokuState.finished?'Dzisiejsza plansza ukończona.':'Czerwone cyfry oznaczają konflikt w wierszu, kolumnie lub kwadracie.'}</div>
+      ${result}
+
+      <div class="sudoku-legend">
+        Sudoku zmienia się codziennie o północy czasu polskiego.
+        Postęp i czas są zapisywane <strong>wyłącznie lokalnie w tej przeglądarce</strong>.
+      </div>
+    </div>`;
+}
+function startSudokuClock(){
+  stopSudokuClock();
+  if(sudokuState?.finished)return;
+  sudokuTimer=setInterval(()=>{
+    const el=$('sudoku-clock');
+    if(el && sudokuState && !sudokuState.finished)el.textContent=sudokuFormatTime(sudokuElapsedMs());
+    if(sudokuState && !sudokuState.finished)saveSudokuState();
+  },1000);
+}
+function stopSudokuClock(){
+  if(sudokuTimer){clearInterval(sudokuTimer);sudokuTimer=null;}
+}
+document.addEventListener('keydown',e=>{
+  const active=$('panel-view-sudoku')?.classList.contains('active');
+  const open=$('side-panel')?.classList.contains('open');
+  if(!active||!open||e.target?.matches?.('input,textarea'))return;
+  if(/^[1-9]$/.test(e.key)){e.preventDefault();sudokuEnter(Number(e.key));return;}
+  if(e.key==='Backspace'||e.key==='Delete'||e.key==='0'){e.preventDefault();sudokuClearSelected();return;}
+  if(!sudokuState || sudokuState.selected==null)return;
+  let next=sudokuState.selected;
+  const r=Math.floor(next/9),c=next%9;
+  if(e.key==='ArrowLeft'&&c>0)next--;
+  else if(e.key==='ArrowRight'&&c<8)next++;
+  else if(e.key==='ArrowUp'&&r>0)next-=9;
+  else if(e.key==='ArrowDown'&&r<8)next+=9;
+  else return;
+  e.preventDefault();selectSudokuCell(next);
+});
+
+
 // ── SIDE PANEL SEARCH ─────────────────────────────────────────────────────
 let panelTimeout=null,panelResults=[];
 
@@ -1294,6 +1762,7 @@ function openPanel(){
 function closePanel(){
   $('side-panel').classList.remove('open');
   $('panel-overlay').classList.remove('open');
+  stopSudokuClock();
 }
 function onPanelInput(val){
   clearTimeout(panelTimeout);
@@ -1332,6 +1801,8 @@ async function tryGPS(){
   if(pos?.error){showDenied(pos.error.code);return;}
   loadWeather(pos.coords.latitude,pos.coords.longitude,null);
 }
+
+window.addEventListener('pagehide',()=>{ if(sudokuState && !sudokuState.finished) saveSudokuState(); });
 
 function showWelcome(){
   set(`
