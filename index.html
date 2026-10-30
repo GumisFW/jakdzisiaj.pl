@@ -389,6 +389,81 @@ html[data-theme="dark"] .sudoku-cell.conflict { color:#ff9c94; background:#3b202
   .sudoku-num { border-radius:7px; font-size:14px; }
 }
 
+
+/* NOWE MENU GŁÓWNE */
+.theme-btn { display:none !important; }
+
+.menu-theme-block {
+  display:flex; flex-direction:column; gap:9px;
+  padding-bottom:18px; border-bottom:1px solid var(--line);
+}
+.menu-section-label {
+  font-size:10px; font-weight:750; color:var(--muted);
+  letter-spacing:.09em; text-transform:uppercase;
+}
+.theme-segment {
+  position:relative; display:grid; grid-template-columns:1fr 1fr;
+  padding:4px; border:1px solid var(--line); border-radius:14px;
+  background:var(--soft); overflow:hidden;
+}
+.theme-segment-slider {
+  position:absolute; top:4px; bottom:4px; left:4px;
+  width:calc(50% - 4px); border-radius:10px;
+  background:var(--surface); box-shadow:0 2px 10px rgba(0,0,0,.07);
+  transform:translateX(0); transition:transform .32s cubic-bezier(.2,.8,.2,1), background-color .45s ease;
+}
+html[data-theme="dark"] .theme-segment-slider { transform:translateX(calc(100% + 4px)); }
+.theme-choice {
+  position:relative; z-index:1; border:0; background:transparent; color:var(--muted);
+  padding:10px 12px; border-radius:10px; font-size:13px; font-weight:680;
+  cursor:pointer; transition:color .2s ease;
+}
+.theme-choice.active { color:var(--text); }
+
+.menu-categories { display:flex; flex-direction:column; gap:8px; }
+.menu-category {
+  width:100%; display:flex; align-items:center; justify-content:space-between; gap:14px;
+  padding:15px 16px; border:1px solid var(--line); border-radius:16px;
+  background:var(--surface); color:var(--text); cursor:pointer; text-align:left;
+  transition:transform .16s ease, background-color .2s ease, border-color .2s ease;
+}
+.menu-category:hover { transform:translateX(2px); background:var(--soft); }
+.menu-category.active { border-color:var(--text); }
+.menu-category-main { display:flex; flex-direction:column; gap:3px; }
+.menu-category-name { font-size:15px; font-weight:720; letter-spacing:-.015em; }
+.menu-category-desc { font-size:11px; color:var(--muted); line-height:1.35; }
+.menu-category-arrow { color:var(--muted); font-size:18px; }
+
+.main-feature-page {
+  max-width:980px; margin:0 auto; min-height:calc(100vh - 190px);
+  display:flex; align-items:flex-start; justify-content:center;
+}
+.main-feature-card {
+  width:100%; background:var(--surface); border:1px solid var(--line);
+  border-radius:var(--radius); box-shadow:var(--shadow);
+  padding:clamp(24px,4vw,44px);
+}
+.main-feature-card .calendar-shell { max-width:620px; margin:0 auto; }
+.main-feature-card .wordle-shell { max-width:520px; margin:0 auto; }
+.main-feature-card .wordle-board { width:min(100%,360px); }
+.main-feature-card .sudoku-shell { max-width:520px; margin:0 auto; }
+.main-feature-card .sudoku-board,
+.main-feature-card .sudoku-pad,
+.main-feature-card .sudoku-actions { width:min(100%,400px); }
+
+@media (max-width:700px) {
+  .main-feature-page { min-height:auto; }
+  .main-feature-card { padding:22px 16px; border-radius:20px; }
+  .main-feature-card .wordle-board { width:min(100%,310px); }
+  .main-feature-card .sudoku-board,
+  .main-feature-card .sudoku-pad,
+  .main-feature-card .sudoku-actions { width:min(100%,330px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .theme-segment-slider, .menu-category { transition:none !important; }
+}
+
 /* SHARED */
 .label { margin-bottom: 18px; }
 .weather-icon { display:inline-flex; align-items:center; justify-content:center; color:var(--text); flex-shrink:0; }
@@ -568,14 +643,6 @@ html[data-theme="dark"] .sudoku-cell.conflict { color:#ff9c94; background:#3b202
   <span></span><span></span><span></span>
 </button>
 
-<button class="theme-btn" id="theme-toggle" type="button" aria-label="Włącz ciemny motyw" aria-pressed="false">
-  <span class="theme-icon theme-sun" aria-hidden="true">
-    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"></path></svg>
-  </span>
-  <span class="theme-icon theme-moon" aria-hidden="true">
-    <svg viewBox="0 0 24 24"><path d="M20.5 14.2A8.5 8.5 0 0 1 9.8 3.5 8.6 8.6 0 1 0 20.5 14.2Z"></path></svg>
-  </span>
-</button>
 
 <div class="panel-overlay" id="panel-overlay" onclick="closePanel()"></div>
 <div class="side-panel" id="side-panel">
@@ -584,30 +651,49 @@ html[data-theme="dark"] .sudoku-cell.conflict { color:#ff9c94; background:#3b202
     <button class="panel-close" onclick="closePanel()" aria-label="Zamknij menu">✕</button>
   </div>
 
-  <div class="panel-nav" role="tablist" aria-label="Menu">
-    <button class="panel-tab active" id="tab-search" type="button" role="tab" aria-selected="true" onclick="switchPanelTab('search')">Miejscowość</button>
-    <button class="panel-tab" id="tab-calendar" type="button" role="tab" aria-selected="false" onclick="switchPanelTab('calendar')">Kalendarz</button>
-    <button class="panel-tab" id="tab-wordle" type="button" role="tab" aria-selected="false" onclick="switchPanelTab('wordle')">Słówko</button>
-    <button class="panel-tab" id="tab-sudoku" type="button" role="tab" aria-selected="false" onclick="switchPanelTab('sudoku')">Sudoku</button>
+  <div class="menu-theme-block">
+    <div class="menu-section-label">Motyw strony</div>
+    <div class="theme-segment" role="group" aria-label="Motyw strony">
+      <span class="theme-segment-slider" aria-hidden="true"></span>
+      <button class="theme-choice" id="theme-light-choice" type="button" onclick="setThemeFromMenu('light')">Jasny</button>
+      <button class="theme-choice" id="theme-dark-choice" type="button" onclick="setThemeFromMenu('dark')">Ciemny</button>
+    </div>
   </div>
 
-  <div class="panel-view active" id="panel-view-search" role="tabpanel">
-    <div class="search-label" style="margin-bottom:10px">Szukaj miejscowości</div>
-    <input class="city-search" id="panel-search-input" type="text" placeholder="np. Zakopane" autocomplete="off" spellcheck="false" oninput="onPanelInput(this.value)"/>
-    <div class="search-results" id="panel-results"></div>
-    <div id="panel-selected"></div>
-  </div>
+  <div class="menu-categories" aria-label="Kategorie">
+    <div class="menu-section-label">Kategorie</div>
 
-  <div class="panel-view" id="panel-view-calendar" role="tabpanel">
-    <div id="calendar-panel"></div>
-  </div>
+    <button class="menu-category active" id="menu-weather" type="button" onclick="showMainFeature('weather')">
+      <span class="menu-category-main">
+        <span class="menu-category-name">Pogoda</span>
+        <span class="menu-category-desc">Aktualna pogoda i prognoza</span>
+      </span>
+      <span class="menu-category-arrow">›</span>
+    </button>
 
-  <div class="panel-view" id="panel-view-wordle" role="tabpanel">
-    <div id="wordle-panel"></div>
-  </div>
+    <button class="menu-category" id="menu-calendar" type="button" onclick="showMainFeature('calendar')">
+      <span class="menu-category-main">
+        <span class="menu-category-name">Kalendarz</span>
+        <span class="menu-category-desc">Święta i niedziele handlowe</span>
+      </span>
+      <span class="menu-category-arrow">›</span>
+    </button>
 
-  <div class="panel-view" id="panel-view-sudoku" role="tabpanel">
-    <div id="sudoku-panel"></div>
+    <button class="menu-category" id="menu-wordle" type="button" onclick="showMainFeature('wordle')">
+      <span class="menu-category-main">
+        <span class="menu-category-name">Słówko</span>
+        <span class="menu-category-desc">Codzienne polskie Wordle</span>
+      </span>
+      <span class="menu-category-arrow">›</span>
+    </button>
+
+    <button class="menu-category" id="menu-sudoku" type="button" onclick="showMainFeature('sudoku')">
+      <span class="menu-category-main">
+        <span class="menu-category-name">Sudoku</span>
+        <span class="menu-category-desc">Nowa plansza każdego dnia</span>
+      </span>
+      <span class="menu-category-arrow">›</span>
+    </button>
   </div>
 </div>
 
@@ -623,26 +709,25 @@ html[data-theme="dark"] .sudoku-cell.conflict { color:#ff9c94; background:#3b202
 
 <script>
 // ── THEME ──────────────────────────────────────────────────────────────────
-const themeToggle = document.getElementById('theme-toggle');
 const systemPrefersDark = window.matchMedia?.('(prefers-color-scheme: dark)').matches;
 
 function applyTheme(theme){
   document.documentElement.dataset.theme = theme;
   const dark = theme === 'dark';
-  if(themeToggle){
-    themeToggle.setAttribute('aria-pressed', String(dark));
-    themeToggle.setAttribute('aria-label', dark ? 'Włącz jasny motyw' : 'Włącz ciemny motyw');
-  }
+  $('theme-light-choice')?.classList.toggle('active',!dark);
+  $('theme-dark-choice')?.classList.toggle('active',dark);
+  $('theme-light-choice')?.setAttribute('aria-pressed',String(!dark));
+  $('theme-dark-choice')?.setAttribute('aria-pressed',String(dark));
 }
-
-applyTheme(systemPrefersDark ? 'dark' : 'light');
-
-if(themeToggle){
-  themeToggle.addEventListener('click', () => {
-    const next = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
-    applyTheme(next);
-  });
+function setThemeFromMenu(theme){
+  applyTheme(theme);
+  try{ localStorage.setItem('jakdzisiaj-theme',theme); }catch(_){}
 }
+let initialTheme = systemPrefersDark ? 'dark' : 'light';
+try{
+  const savedTheme=localStorage.getItem('jakdzisiaj-theme');
+  if(savedTheme==='light'||savedTheme==='dark') initialTheme=savedTheme;
+}catch(_){}
 
 // ── MIN.IMAL LINE ICONS ─────────────────────────────────────────────────────
 function lineIcon(type, size=24){
@@ -690,6 +775,8 @@ const avg = a  => a.length?a.reduce((x,y)=>x+y)/a.length:0;
 const set = html => { $('app').innerHTML=html; };
 const DAYS  = ['Nd','Pn','Wt','Śr','Cz','Pt','So'];
 const PARTS = [{name:'Rano',s:6,e:11},{name:'Południe',s:11,e:15},{name:'Wieczór',s:17,e:21},{name:'Noc',s:21,e:24}];
+
+applyTheme(initialTheme);
 
 // ── CITIES LIST ───────────────────────────────────────────────────────────
 const CITIES = [
@@ -753,7 +840,11 @@ async function fetchWeather(lat,lon){
 }
 
 // ── LOAD + RENDER WEATHER ─────────────────────────────────────────────────
+let lastWeatherRequest=null;
 async function loadWeather(lat,lon,cityName){
+  activeMainFeature='weather';
+  lastWeatherRequest={lat,lon,cityName:cityName||null};
+  updateMenuActive();
   set(`<div class="loading">Ładowanie pogody…</div>`);
   try{
     const[data,city]=await Promise.all([fetchWeather(lat,lon),cityName?Promise.resolve(cityName):getCityName(lat,lon)]);
@@ -1039,8 +1130,10 @@ function nextTradingSundayAfter(from=new Date()){
 function formatLongDate(d){
   return `${WEEKDAYS_LONG[d.getDay()]}, ${d.getDate()} ${MONTH_NAMES_GEN[d.getMonth()]} ${d.getFullYear()}`;
 }
-function renderCalendar(){
-  const root=$('calendar-panel'); if(!root)return;
+let calendarRootId='calendar-main';
+function renderCalendar(rootId=calendarRootId){
+  calendarRootId=rootId;
+  const root=$(rootId); if(!root)return;
   const year=calendarCursor.getFullYear(), month=calendarCursor.getMonth();
   const first=new Date(year,month,1), daysInMonth=new Date(year,month+1,0).getDate();
   const mondayOffset=(first.getDay()+6)%7;
@@ -1107,36 +1200,6 @@ function changeCalendarMonth(delta){
   calendarSelected=new Date(calendarCursor.getFullYear(),calendarCursor.getMonth(),1);
   renderCalendar();
 }
-function switchPanelTab(tab){
-  const tabs=['search','calendar','wordle','sudoku'];
-  tabs.forEach(name=>{
-    const active=tab===name;
-    $(`tab-${name}`)?.classList.toggle('active',active);
-    $(`tab-${name}`)?.setAttribute('aria-selected',String(active));
-    $(`panel-view-${name}`)?.classList.toggle('active',active);
-  });
-
-  if(tab==='calendar'){
-    const now=new Date();
-    calendarCursor=new Date(now.getFullYear(),now.getMonth(),1);
-    calendarSelected=new Date(now.getFullYear(),now.getMonth(),now.getDate());
-    renderCalendar();
-  }else if(tab==='wordle'){
-    loadWordleState();
-    renderWordle();
-  }else if(tab==='sudoku'){
-    loadSudokuState();
-    renderSudoku();
-    startSudokuClock();
-  }else if(tab==='search'){
-    stopSudokuClock();
-    setTimeout(()=>$('panel-search-input')?.focus(),50);
-  }else{
-    stopSudokuClock();
-  }
-}
-
-
 // ── SŁÓWKO DNIA ───────────────────────────────────────────────────────────
 const WORDLE_ANSWERS = ["alarm", "arbuz", "balon", "banan", "baran", "bilet", "blask", "brama", "brzeg", "cegła", "cisza", "czapa", "deska", "drzwi", "dynia", "dźwig", "ekran", "farba", "fotel", "głowa", "gracz", "grupa", "gumka", "hałas", "hotel", "jajko", "kabel", "kakao", "karta", "katar", "kawał", "kibic", "klasa", "klucz", "kocur", "kolor", "konto", "kreda", "kwiat", "laser", "lampa", "leśny", "lisek", "łyżka", "magia", "masło", "mleko", "morze", "motor", "niebo", "obiad", "obraz", "ogród", "opona", "palec", "panel", "peron", "pizza", "pokój", "praca", "radio", "rzeka", "serce", "sklep", "słoik", "słowo", "sport", "szafa", "szary", "szkło", "szlak", "tango", "teren", "torba", "trawa", "ulica", "wagon", "wiatr", "wideo", "zamek", "zegar", "złoto", "żabka", "żarty", "aktor", "adres", "akord", "album", "anioł", "arena", "atlas", "autor", "awans", "babka", "bajka", "bańka", "bęben", "biuro", "bluza", "błoto", "bonus", "burza", "cecha", "celny", "cenny", "cichy", "cudny", "cyfra", "dętka", "długi", "drama", "dusza", "dywan", "fajny", "farsa", "finał", "firma", "fobia", "gadka", "galop", "garść", "gęsty", "gmina", "górka", "górny", "groch", "gruby", "grunt", "guzik", "jacht", "jeans", "język", "kadra", "kajak", "kamyk", "kanał", "karma", "kebab", "kiedy", "kijek", "kiosk", "kobra", "koala", "korek", "kotek", "krata", "krowa", "krzak", "kurka", "kwota", "lalka", "lasek", "lekki", "lilia", "linia", "lista", "lokal", "łaska", "łóżko", "marka", "maska", "mebel", "metal", "miara", "mięso", "miska", "mocny", "model", "młody", "narty", "nauka", "nerka", "nisko", "norma", "numer", "obłok", "ocean", "oczko", "ogień", "okres", "oliwa", "opera", "orkan", "panda", "panna", "pasek", "pasta", "patyk", "perła", "piana", "pilot", "piłka", "pióro", "płaca", "płacz", "płuca", "poeta", "pomoc", "pompa", "powód", "ptaki", "punkt", "robot", "rondo", "rower", "różny", "rynek", "sanki", "senny", "seria", "siano", "skala", "skarb", "skóra", "smuga", "sosna", "sroka", "stado", "stary", "sufit", "sushi", "sznur", "tarka", "teatr", "tekst", "tempo", "tętno", "toast", "trasa", "twarz", "ugoda", "urlop", "wafel", "walka", "wanna", "wąski", "wazon", "wełna", "winda", "worek", "wózek", "wyraz", "wyspa", "zając", "zakup", "zapas", "zawór", "zboże", "zebra", "zgoda", "zjawa", "złość", "żeton", "żmija", "żurek"];
 const WORDLE_ROWS = 6;
@@ -1277,8 +1340,10 @@ async function shareWordleResult(){
   }
 }
 
-function renderWordle(){
-  const root=$('wordle-panel'); if(!root)return;
+let wordleRootId='wordle-main';
+function renderWordle(rootId=wordleRootId){
+  wordleRootId=rootId;
+  const root=$(rootId); if(!root)return;
   if(!wordleState || wordleState.date!==polandDateKey()) loadWordleState();
   const answer=dailyWord(wordleState.date);
 
@@ -1381,9 +1446,9 @@ function wordlePress(key){
   }
 }
 document.addEventListener('keydown',e=>{
-  const active=$('panel-view-wordle')?.classList.contains('active');
+  const active=activeMainFeature==='wordle';
   const open=$('side-panel')?.classList.contains('open');
-  if(!active || !open || e.target?.matches?.('input,textarea')) return;
+  if(!active || open || e.target?.matches?.('input,textarea')) return;
   if(e.key==='Enter'){e.preventDefault();wordlePress('ENTER');return;}
   if(e.key==='Backspace'){e.preventDefault();wordlePress('BACKSPACE');return;}
   const ch=String(e.key||'').toUpperCase();
@@ -1652,8 +1717,10 @@ function sudokuMessage(text){
   el.textContent=text;
   setTimeout(()=>{if(el && !sudokuState?.finished)el.textContent=old;},1300);
 }
-function renderSudoku(){
-  const root=$('sudoku-panel');if(!root)return;
+let sudokuRootId='sudoku-main';
+function renderSudoku(rootId=sudokuRootId){
+  sudokuRootId=rootId;
+  const root=$(rootId);if(!root)return;
   if(!sudokuState || sudokuState.date!==polandDateKey())loadSudokuState();
 
   const selected=sudokuState.selected;
@@ -1733,9 +1800,9 @@ function stopSudokuClock(){
   if(sudokuTimer){clearInterval(sudokuTimer);sudokuTimer=null;}
 }
 document.addEventListener('keydown',e=>{
-  const active=$('panel-view-sudoku')?.classList.contains('active');
+  const active=activeMainFeature==='sudoku';
   const open=$('side-panel')?.classList.contains('open');
-  if(!active||!open||e.target?.matches?.('input,textarea'))return;
+  if(!active||open||e.target?.matches?.('input,textarea'))return;
   if(/^[1-9]$/.test(e.key)){e.preventDefault();sudokuEnter(Number(e.key));return;}
   if(e.key==='Backspace'||e.key==='Delete'||e.key==='0'){e.preventDefault();sudokuClearSelected();return;}
   if(!sudokuState || sudokuState.selected==null)return;
@@ -1750,19 +1817,67 @@ document.addEventListener('keydown',e=>{
 });
 
 
+
+// ── GŁÓWNA NAWIGACJA ─────────────────────────────────────────────────────
+let activeMainFeature='weather';
+
+function updateMenuActive(){
+  ['weather','calendar','wordle','sudoku'].forEach(name=>{
+    $('menu-'+name)?.classList.toggle('active',activeMainFeature===name);
+  });
+}
+function showMainFeature(feature){
+  activeMainFeature=feature;
+  updateMenuActive();
+  closePanel();
+  stopSudokuClock();
+
+  if(feature==='weather'){
+    if(lastWeatherRequest){
+      const w=lastWeatherRequest;
+      loadWeather(w.lat,w.lon,w.cityName);
+    }else{
+      showWelcome();
+    }
+    return;
+  }
+
+  if(feature==='calendar'){
+    set(`<section class="main-feature-page"><div class="main-feature-card"><div id="calendar-main"></div></div></section>`);
+    const now=new Date();
+    if(!calendarSelected) calendarSelected=new Date(now.getFullYear(),now.getMonth(),now.getDate());
+    renderCalendar('calendar-main');
+    return;
+  }
+
+  if(feature==='wordle'){
+    set(`<section class="main-feature-page"><div class="main-feature-card"><div id="wordle-main"></div></div></section>`);
+    loadWordleState();
+    renderWordle('wordle-main');
+    return;
+  }
+
+  if(feature==='sudoku'){
+    set(`<section class="main-feature-page"><div class="main-feature-card"><div id="sudoku-main"></div></div></section>`);
+    loadSudokuState();
+    renderSudoku('sudoku-main');
+    startSudokuClock();
+  }
+}
+
+
 // ── SIDE PANEL SEARCH ─────────────────────────────────────────────────────
 let panelTimeout=null,panelResults=[];
 
 function openPanel(){
+  updateMenuActive();
+  applyTheme(document.documentElement.dataset.theme||initialTheme);
   $('side-panel').classList.add('open');
   $('panel-overlay').classList.add('open');
-  const searchActive=$('panel-view-search')?.classList.contains('active');
-  if(searchActive) setTimeout(()=>{const el=$('panel-search-input');if(el)el.focus();},200);
 }
 function closePanel(){
   $('side-panel').classList.remove('open');
   $('panel-overlay').classList.remove('open');
-  stopSudokuClock();
 }
 function onPanelInput(val){
   clearTimeout(panelTimeout);
@@ -1828,6 +1943,8 @@ function showWelcome(){
 }
 
 function init(){
+  activeMainFeature='weather';
+  updateMenuActive();
   showWelcome();
 }
 
